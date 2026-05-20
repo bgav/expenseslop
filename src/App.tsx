@@ -9,7 +9,6 @@ import {
   processRecurringRules, generateId
 } from './db';
 import AccountList from './components/AccountList';
-import TransactionForm from './components/TransactionForm';
 import TransactionLedger from './components/TransactionLedger';
 import RecurringEngine from './components/RecurringEngine';
 import CategoryManager from './components/CategoryManager';
@@ -839,16 +838,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* Sticky rapid entry creator form */}
-              <TransactionForm 
-                accounts={accounts}
-                selectedAccountId={selectedAccountId}
-                onAddTransaction={handleAddTransaction}
-                transactions={transactions}
-                categories={categories}
-                onManageCategories={() => setIsCategoryManagerOpen(true)}
-              />
-
               <TransactionLedger 
                 transactions={transactions}
                 accounts={accounts}
@@ -856,6 +845,10 @@ export default function App() {
                 onUpdateTransaction={handleUpdateTransaction}
                 onDeleteTransaction={handleDeleteTransaction}
                 onReconcileTransactions={handleReconcileTransactions}
+                onAddTransaction={handleAddTransaction}
+                onAddRule={handleAddRule}
+                categories={categories}
+                onManageCategories={() => setIsCategoryManagerOpen(true)}
               />
             </div>
           )}

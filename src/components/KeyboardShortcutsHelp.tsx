@@ -16,7 +16,7 @@ export default function KeyboardShortcutsHelp() {
   };
 
   const SHORTCUTS = [
-    { keys: ['Alt', 'N'], desc: 'Focus Payee in sticky swift entry' },
+    { keys: ['Shift', 'N'], desc: 'Add new transaction inline' },
     { keys: ['Alt', 'A'], desc: 'Add new account' },
     { keys: ['Alt', 'C'], desc: 'Open / toggle Categories panel' },
     { keys: ['Alt', 'R'], desc: 'Open / toggle Recurring Engine panel' },
