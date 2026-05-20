@@ -262,7 +262,7 @@ export default function AccountList({
                 <button
                   type="button"
                   onClick={() => toggleGroup(group.name)}
-                  className="w-full flex items-center justify-between py-1.5 px-1 hover:bg-white/5 rounded text-left transition select-none cursor-pointer text-slate-350 hover:text-white"
+                  className="w-full flex items-center justify-between py-2 pr-3.5 pl-1.5 hover:bg-white/5 rounded text-left transition select-none cursor-pointer text-slate-350 hover:text-white"
                 >
                   <div className="flex items-center gap-1">
                     {isCollapsed ? (
@@ -270,17 +270,17 @@ export default function AccountList({
                     ) : (
                       <ChevronDown size={13} className="text-slate-400 shrink-0" />
                     )}
-                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-350">
+                    <span className="text-[12px] font-sans font-bold uppercase tracking-wider text-slate-300">
                       {group.label}
                     </span>
                   </div>
-                  <div>
+                  <div className="font-sans text-[12px] font-bold text-right shrink-0">
                     {groupSum < 0 ? (
-                      <span className="bg-rose-500/20 border border-rose-500/30 text-rose-300 px-2 py-0.5 rounded-full font-bold font-mono text-[10px]">
+                      <span className="text-rose-450">
                         {formatCurrency(groupSum)}
                       </span>
                     ) : (
-                      <span className="font-mono font-bold text-slate-100 text-[10.5px]">
+                      <span className="text-slate-100">
                         {formatCurrency(groupSum)}
                       </span>
                     )}
@@ -289,7 +289,9 @@ export default function AccountList({
 
                 {/* Sub-list of group's accounts nested and indented */}
                 {!isCollapsed && (
-                  <div className="space-y-1 pl-3 border-l border-white/10 ml-2 animate-fadeIn">
+                  <div className="space-y-1 relative animate-fadeIn">
+                    {/* Decorative vertical tree connector line */}
+                    <div className="absolute left-[12px] top-0 bottom-4 w-px bg-white/10 z-0 pointer-events-none" />
                     {groupAccounts.map(acc => {
                       const balances = calculatedBalances[acc.id] || { current: acc.initialBalance, reconciled: acc.initialBalance };
                       const isSelected = selectedAccountId === acc.id;
@@ -305,7 +307,7 @@ export default function AccountList({
                         >
                           <div
                             onClick={() => onSelectAccount(acc.id)}
-                            className="w-full text-left p-2.5 flex items-center justify-between cursor-pointer"
+                            className="w-full text-left py-2.5 pr-3.5 pl-8 flex items-center justify-between cursor-pointer relative z-10"
                             id={`account-btn-${acc.id}`}
                           >
                             <div className="flex items-center pr-8 truncate">
@@ -313,9 +315,9 @@ export default function AccountList({
                                 {acc.name}
                               </span>
                             </div>
-                            <div className="text-right shrink-0 font-mono">
+                            <div className="text-right shrink-0 font-sans">
                               {balances.current < 0 ? (
-                                <span className="bg-rose-950/45 border border-rose-500/30 text-rose-300 px-1.5 py-0.5 rounded font-bold font-mono text-[10.5px]">
+                                <span className="bg-rose-950/45 border border-rose-500/30 text-rose-300 px-1.5 py-0.5 rounded font-bold text-[10.5px]">
                                   {formatCurrency(balances.current)}
                                 </span>
                               ) : (
