@@ -596,7 +596,7 @@ export default function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f4f3ed] text-slate-800 font-sans" id="applet-root-container">
+    <div className="flex flex-col min-h-screen bg-[#f4f3ed] text-slate-800 font-sans" id="applet-root-container">
       
       {/* Toast Alert Banner */}
       {notification && (
@@ -721,7 +721,7 @@ export default function App() {
         </aside>
 
         {/* Right Side: Account search list, sticky transaction generator inputs */}
-        <section className="flex-1 bg-[#f4f3ed] p-4 md:p-6 lg:p-8 space-y-6 overflow-y-auto" id="main-ledger-section">
+        <section className="flex-1 bg-[#f4f3ed] p-5 md:p-6 space-y-3 overflow-y-auto" id="main-ledger-section">
           
           {accounts.length === 0 ? (
             <div className="bg-white border border-[#e4e2d9] rounded p-12 text-center text-slate-600 shadow-sm relative animate-fadeIn">
@@ -732,7 +732,113 @@ export default function App() {
               </p>
             </div>
           ) : (
-            <>
+            <div className="space-y-3">
+              {/* YNAB-style Account Summary Header Dashboard */}
+              <div className="bg-white rounded border border-[#e4e2d9] p-4 shadow-sm space-y-3.5 relative animate-fadeIn" id="account-ledger-header-panel">
+                {/* Account Name & Metas Row */}
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="space-y-0.5">
+                    <div className="flex items-center gap-2">
+                      <h2 className="text-xl md:text-2xl font-bold font-sans tracking-tight text-slate-800">
+                        {selectedAccountId !== null ? activeAccount?.name : "All Accounts"}
+                      </h2>
+                      <button 
+                        className="text-amber-400 hover:text-amber-500 transition cursor-pointer" 
+                        aria-label="Favorite account indicator"
+                      >
+                        <Star size={18} className="fill-current text-amber-400 stroke-amber-500" />
+                      </button>
+                    </div>
+                    
+                    <div className="flex flex-wrap items-center gap-2 text-slate-500 text-[11px] font-mono select-none">
+                      <div className="flex items-center gap-1 justify-start">
+                        {selectedAccountId !== null ? (
+                          <>
+                            <CreditCard size={13} className="text-slate-400" />
+                            <span className="capitalize">{activeAccount?.type}</span>
+                          </>
+                        ) : (
+                          <>
+                            <Landmark size={13} className="text-slate-400" />
+                            <span>Combined Cashflow Ledger</span>
+                          </>
+                        )}
+                      </div>
+                      
+                      <span className="text-slate-300">•</span>
+
+                      <div className="flex items-center gap-1 text-emerald-600">
+                        <Lock size={12} className="text-emerald-550 shrink-0" />
+                        <span className="font-semibold">
+                          {selectedAccountId !== null 
+                            ? getRelativeDateString(activeAccount?.reconciliationDate) 
+                            : getMostRecentReconciliationDateStr()
+                          }
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="text-right shrink-0 select-none">
+                    <span className="text-[10px] font-mono uppercase bg-slate-100 border border-slate-200 text-slate-500 px-2 py-1 rounded-sm">
+                      {selectedAccountId !== null 
+                        ? `${transactions.filter(t => t.accountId === selectedAccountId).length} items recorded` 
+                        : `${transactions.length} items logged`
+                      }
+                    </span>
+                  </div>
+                </div>
+
+                <div className="border-b border-slate-150"></div>
+
+                {/* Math Formula Group: Cleared Balance + Uncleared Balance = Working Balance */}
+                <div className="flex flex-wrap items-center gap-y-3 gap-x-6 sm:gap-x-8 pt-0.5 select-none text-slate-800">
+                  
+                  {/* Cleared Balance */}
+                  <div className="space-y-0.5">
+                    <div className={`text-xl md:text-2xl font-mono font-bold tracking-tight ${clearedSum < 0 ? 'text-red-500' : 'text-slate-800'}`}>
+                      {formatAmount(clearedSum)}
+                    </div>
+                    <div className="text-[10.5px] font-mono text-slate-500 font-bold uppercase tracking-wide flex items-center gap-1.5 select-none">
+                      <span className="w-3.5 h-3.5 rounded-full bg-slate-700 text-[8px] font-sans font-extrabold text-white flex items-center justify-center leading-none select-none">C</span>
+                      Cleared Balance
+                    </div>
+                  </div>
+
+                  {/* Plus */}
+                  <div className="text-slate-400 text-lg font-bold font-mono select-none px-1">
+                    +
+                  </div>
+
+                  {/* Uncleared Balance */}
+                  <div className="space-y-0.5">
+                    <div className={`text-xl md:text-2xl font-mono font-bold tracking-tight ${unclearedSum < 0 ? 'text-red-500' : 'text-slate-800'}`}>
+                      {formatAmount(unclearedSum)}
+                    </div>
+                    <div className="text-[10.5px] font-mono text-slate-500 font-bold uppercase tracking-wide flex items-center gap-1.5 select-none">
+                      <span className="w-3.5 h-3.5 rounded-full border border-slate-400 text-[8px] font-sans font-extrabold text-slate-500 flex items-center justify-center leading-none select-none">C</span>
+                      Uncleared Balance
+                    </div>
+                  </div>
+
+                  {/* Equals */}
+                  <div className="text-slate-400 text-lg font-bold font-mono select-none px-1">
+                    =
+                  </div>
+
+                  {/* Working Balance */}
+                  <div className="space-y-0.5">
+                    <div className={`text-xl md:text-2xl font-mono font-bold tracking-tight ${workingSum < 0 ? 'text-red-650' : 'text-slate-900'}`}>
+                      {formatAmount(workingSum)}
+                    </div>
+                    <div className="text-[10.5px] font-sans text-slate-650 font-bold uppercase tracking-wide flex items-center gap-1.5 select-none">
+                      Working Balance
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
               {/* Sticky rapid entry creator form */}
               <TransactionForm 
                 accounts={accounts}
@@ -743,124 +849,15 @@ export default function App() {
                 onManageCategories={() => setIsCategoryManagerOpen(true)}
               />
 
-              {/* Transactions Panel containing search, filtration & page views */}
-              <div className="space-y-4">
-                {/* YNAB-style Account Summary Header Dashboard */}
-                <div className="bg-white rounded border border-[#e4e2d9] p-5 shadow-sm space-y-4 relative animate-fadeIn" id="account-ledger-header-panel">
-                  {/* Account Name & Metas Row */}
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                    <div className="space-y-1">
-                      <div className="flex items-center gap-2">
-                        <h2 className="text-xl md:text-2xl font-bold font-sans tracking-tight text-slate-800">
-                          {selectedAccountId !== null ? activeAccount?.name : "All Accounts"}
-                        </h2>
-                        <button 
-                          className="text-amber-400 hover:text-amber-500 transition cursor-pointer" 
-                          aria-label="Favorite account indicator"
-                        >
-                          <Star size={18} className="fill-current text-amber-400 stroke-amber-500" />
-                        </button>
-                      </div>
-                      
-                      <div className="flex flex-wrap items-center gap-2 text-slate-500 text-[11.5px] font-mono select-none">
-                        <div className="flex items-center gap-1 justify-start">
-                          {selectedAccountId !== null ? (
-                            <>
-                              <CreditCard size={13} className="text-slate-400" />
-                              <span className="capitalize">{activeAccount?.type}</span>
-                            </>
-                          ) : (
-                            <>
-                              <Landmark size={13} className="text-slate-400" />
-                              <span>Combined Cashflow Ledger</span>
-                            </>
-                          )}
-                        </div>
-                        
-                        <span className="text-slate-300">•</span>
-
-                        <div className="flex items-center gap-1 text-emerald-600">
-                          <Lock size={12} className="text-emerald-550 shrink-0" />
-                          <span className="font-semibold">
-                            {selectedAccountId !== null 
-                              ? getRelativeDateString(activeAccount?.reconciliationDate) 
-                              : getMostRecentReconciliationDateStr()
-                            }
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="text-right shrink-0 select-none">
-                      <span className="text-[10px] font-mono uppercase bg-slate-100 border border-slate-200 text-slate-500 px-2 py-1 rounded-sm">
-                        {selectedAccountId !== null 
-                          ? `${transactions.filter(t => t.accountId === selectedAccountId).length} items recorded` 
-                          : `${transactions.length} items logged`
-                        }
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="border-b border-slate-150"></div>
-
-                  {/* Math Formula Group: Cleared Balance + Uncleared Balance = Working Balance */}
-                  <div className="flex flex-wrap items-center gap-y-4 gap-x-8 sm:gap-x-12 pt-1 select-none text-slate-800">
-                    
-                    {/* Cleared Balance */}
-                    <div className="space-y-1">
-                      <div className={`text-xl md:text-2xl font-mono font-bold tracking-tight ${clearedSum < 0 ? 'text-red-500' : 'text-slate-800'}`}>
-                        {formatAmount(clearedSum)}
-                      </div>
-                      <div className="text-[10.5px] font-mono text-slate-500 font-bold uppercase tracking-wide flex items-center gap-1.5 mt-1 select-none">
-                        <span className="w-3.5 h-3.5 rounded-full bg-slate-700 text-[8px] font-sans font-extrabold text-white flex items-center justify-center leading-none select-none">C</span>
-                        Cleared Balance
-                      </div>
-                    </div>
-
-                    {/* Plus */}
-                    <div className="text-slate-400 text-lg font-bold font-mono select-none px-1">
-                      +
-                    </div>
-
-                    {/* Uncleared Balance */}
-                    <div className="space-y-1">
-                      <div className={`text-xl md:text-2xl font-mono font-bold tracking-tight ${unclearedSum < 0 ? 'text-red-500' : 'text-slate-800'}`}>
-                        {formatAmount(unclearedSum)}
-                      </div>
-                      <div className="text-[10.5px] font-mono text-slate-500 font-bold uppercase tracking-wide flex items-center gap-1.5 mt-1 select-none">
-                        <span className="w-3.5 h-3.5 rounded-full border border-slate-400 text-[8px] font-sans font-extrabold text-slate-500 flex items-center justify-center leading-none select-none">C</span>
-                        Uncleared Balance
-                      </div>
-                    </div>
-
-                    {/* Equals */}
-                    <div className="text-slate-400 text-lg font-bold font-mono select-none px-1">
-                      =
-                    </div>
-
-                    {/* Working Balance */}
-                    <div className="space-y-1">
-                      <div className={`text-xl md:text-2xl font-mono font-bold tracking-tight ${workingSum < 0 ? 'text-red-650' : 'text-slate-900'}`}>
-                        {formatAmount(workingSum)}
-                      </div>
-                      <div className="text-[10.5px] font-sans text-slate-650 font-bold uppercase tracking-wide flex items-center gap-1.5 mt-1 select-none">
-                        Working Balance
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
-
-                <TransactionLedger 
-                  transactions={transactions}
-                  accounts={accounts}
-                  selectedAccountId={selectedAccountId}
-                  onUpdateTransaction={handleUpdateTransaction}
-                  onDeleteTransaction={handleDeleteTransaction}
-                  onReconcileTransactions={handleReconcileTransactions}
-                />
-              </div>
-            </>
+              <TransactionLedger 
+                transactions={transactions}
+                accounts={accounts}
+                selectedAccountId={selectedAccountId}
+                onUpdateTransaction={handleUpdateTransaction}
+                onDeleteTransaction={handleDeleteTransaction}
+                onReconcileTransactions={handleReconcileTransactions}
+              />
+            </div>
           )}
 
         </section>
