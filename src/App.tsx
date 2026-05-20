@@ -700,11 +700,11 @@ export default function App() {
         </div>
       </header>
 
-      {/* Primary Workspace Layout */}
-      <main className="w-full max-w-none p-4 md:p-6 lg:p-8 lg:px-12 grid grid-cols-1 lg:grid-cols-5 gap-6" id="dashboard-columns-grid">
+      {/* Primary Workspace Layout Pane Split */}
+      <div className="flex flex-col md:flex-row flex-1" id="main-panes-split-container">
         
-        {/* Left Side: Accounts, shortcut help maps */}
-        <section className="col-span-1 lg:col-span-1 space-y-6">
+        {/* Left Side: Accounts & shortcut guide pane */}
+        <aside className="w-full md:w-80 flex-shrink-0 bg-[#161a36] text-slate-100 p-5 md:p-6 space-y-6 border-r border-[#202544] flex flex-col justify-start" id="accounts-sidebar-pane">
           
           <AccountList 
             accounts={accounts}
@@ -718,10 +718,10 @@ export default function App() {
 
           <KeyboardShortcutsHelp />
 
-        </section>
+        </aside>
 
         {/* Right Side: Account search list, sticky transaction generator inputs */}
-        <section className="col-span-1 lg:col-span-4 space-y-6" id="main-ledger-section">
+        <section className="flex-1 bg-[#f4f3ed] p-4 md:p-6 lg:p-8 space-y-6 overflow-y-auto" id="main-ledger-section">
           
           {accounts.length === 0 ? (
             <div className="bg-white border border-[#e4e2d9] rounded p-12 text-center text-slate-600 shadow-sm relative animate-fadeIn">
@@ -865,7 +865,7 @@ export default function App() {
 
         </section>
 
-      </main>
+      </div>
 
       {/* Standing Recurring Rule Config Engine Modal Component overlay */}
       {accounts.length > 0 && (

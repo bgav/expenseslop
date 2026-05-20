@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Account, AccountType } from '../types';
-import { Plus, Wallet, CreditCard, Landmark, PiggyBank, CheckCircle2, AlertCircle, Edit, Trash2 } from 'lucide-react';
+import { Plus, Wallet, CreditCard, Landmark, PiggyBank, CheckCircle2, AlertCircle, Edit, Trash2, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface AccountListProps {
   accounts: Account[];
@@ -32,6 +32,18 @@ export default function AccountList({
 }: AccountListProps) {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingAccount, setEditingAccount] = useState<Account | null>(null);
+
+  // Group collapsed state
+  const [collapsedGroups, setCollapsedGroups] = useState<Record<string, boolean>>(() => {
+    const stored = localStorage.getItem('collapsed_account_groups');
+    return stored ? JSON.parse(stored) : {}; // Default to keeping all groups expanded
+  });
+
+  const toggleGroup = (groupName: string) => {
+    const next = { ...collapsedGroups, [groupName]: !collapsedGroups[groupName] };
+    setCollapsedGroups(next);
+    localStorage.setItem('collapsed_account_groups', JSON.stringify(next));
+  };
   
   // Form fields
   const [name, setName] = useState('');
@@ -111,34 +123,34 @@ export default function AccountList({
         onClick={() => onSelectAccount(null)}
         className={`w-full text-left p-3.5 rounded border transition-all duration-200 flex items-center justify-between group cursor-pointer ${
           selectedAccountId === null
-            ? 'bg-white border-[#e4e2d9] shadow-sm text-slate-900 font-semibold'
-            : 'bg-transparent border-transparent text-slate-600 hover:bg-[#eae8df]/50'
+            ? 'bg-[#2a2f58] border-white/25 shadow-sm text-white font-semibold'
+            : 'bg-transparent border-transparent text-slate-300 hover:bg-white/5'
         }`}
         id="account-btn-all"
       >
         <div className="flex items-center gap-3">
-          <div className={`p-1.5 rounded-sm ${selectedAccountId === null ? 'bg-slate-800 text-white' : 'bg-[#eae8df] text-slate-600'}`}>
+          <div className={`p-1.5 rounded-sm ${selectedAccountId === null ? 'bg-[#3b82f6] text-white' : 'bg-[#202544] text-slate-400'}`}>
             <Landmark size={15} />
           </div>
           <div>
-            <span className="font-sans font-semibold text-xs block">All Accounts</span>
-            <span className={`text-[10px] font-mono ${selectedAccountId === null ? 'text-slate-500' : 'text-slate-400'}`}>
+            <span className="font-sans font-semibold text-xs block text-white">All Accounts</span>
+            <span className={`text-[10px] font-mono ${selectedAccountId === null ? 'text-slate-350' : 'text-slate-400'}`}>
               All assets & liabilities
             </span>
           </div>
         </div>
         <div className="text-right">
-          <span className="text-xs font-mono font-semibold block text-slate-800">{formatCurrency(totalNetWorth)}</span>
+          <span className="text-xs font-mono font-semibold block text-white">{formatCurrency(totalNetWorth)}</span>
         </div>
       </button>
 
       {/* Account List Header and container */}
       <div className="space-y-2.5">
-        <div className="flex items-center justify-between px-1 border-t border-slate-100 pt-3">
+        <div className="flex items-center justify-between px-1 border-t border-white/10 pt-3">
           <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">Accounts</h3>
           <button
             onClick={() => { resetForm(); setIsFormOpen(true); }}
-            className="p-1 px-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded text-xs font-mono flex items-center gap-1 transition duration-150 focus:outline-none"
+            className="p-1 px-1.5 text-slate-400 hover:text-white hover:bg-white/10 rounded text-xs font-mono flex items-center gap-1 transition duration-150 focus:outline-none cursor-pointer"
             title="Add Account (Alt+A)"
             id="add-account-btn"
           >
@@ -149,28 +161,28 @@ export default function AccountList({
 
         {/* Form to Create/Edit Account */}
         {isFormOpen && (
-          <form onSubmit={handleSubmit} className="bg-slate-50 border border-slate-200 rounded p-4 space-y-3 animate-fadeIn">
-            <div className="flex justify-between items-center pb-1 border-b border-slate-200">
-              <span className="text-xs font-semibold text-slate-800">
+          <form onSubmit={handleSubmit} className="bg-[#202544] border border-white/10 rounded p-4 space-y-3 animate-fadeIn text-white">
+            <div className="flex justify-between items-center pb-1 border-b border-white/10">
+              <span className="text-xs font-bold text-white">
                 {editingAccount ? 'Edit Account' : 'New Account'}
               </span>
               <button 
                 type="button" 
                 onClick={resetForm} 
-                className="text-xs text-slate-500 hover:text-slate-805"
+                className="text-xs text-slate-400 hover:text-white cursor-pointer"
               >
                 Cancel
               </button>
             </div>
             
             <div className="space-y-1">
-              <label className="text-[11px] font-mono text-slate-500">Account Name</label>
+              <label className="text-[11px] font-mono text-slate-400">Account Name</label>
               <input
                 type="text"
                 value={name}
                 onChange={e => setName(e.target.value)}
                 placeholder="e.g. Chase Checkings"
-                className="w-full text-xs bg-white rounded-sm border border-slate-300 p-2 text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:outline-none"
+                className="w-full text-xs bg-[#131735]/60 rounded-sm border border-white/15 p-2 text-white placeholder-white/30 truncate focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:outline-none"
                 required
                 autoFocus
               />
@@ -178,42 +190,42 @@ export default function AccountList({
 
             <div className="grid grid-cols-2 gap-2">
               <div className="space-y-1">
-                <label className="text-[11px] font-mono text-slate-500">Account Type</label>
+                <label className="text-[11px] font-mono text-slate-400">Account Type</label>
                 <select
                   value={type}
                   onChange={e => setType(e.target.value as AccountType)}
-                  className="w-full text-xs bg-white rounded-sm border border-slate-300 p-2 text-slate-800 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                  className="w-full text-xs bg-[#131735]/60 rounded-sm border border-white/15 p-2 text-white focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20 cursor-pointer"
                 >
                   {ACCOUNT_TYPES.map(t => (
-                    <option key={t.value} value={t.value}>{t.label}</option>
+                    <option key={t.value} value={t.value} className="bg-[#1a1e3a] text-white">{t.label}</option>
                   ))}
                 </select>
               </div>
 
               <div className="space-y-1">
-                <label className="text-[11px] font-mono text-slate-500">Starting Balance</label>
+                <label className="text-[11px] font-mono text-slate-400">Starting Balance</label>
                 <input
                   type="number"
                   step="0.01"
                   value={initialBalance}
                   onChange={e => setInitialBalance(parseFloat(e.target.value) || 0)}
-                  className="w-full text-xs bg-white rounded-sm border border-slate-300 p-2 text-slate-800 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                  className="w-full text-xs bg-[#131735]/60 rounded-sm border border-white/15 p-2 text-white focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
                 />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-[11px] font-mono text-slate-500 block">Account Color Theme</label>
+              <label className="text-[11px] font-mono text-slate-400 block">Account Color Theme</label>
               <div className="flex flex-wrap gap-1.5 pt-1">
                 {COLORS.map(c => (
                   <button
                     key={c}
                     type="button"
                     onClick={() => setColor(c)}
-                    className="w-5 h-5 rounded-full border-2 transition focus:outline-none"
+                    className="w-5 h-5 rounded-full border-2 transition focus:outline-none cursor-pointer"
                     style={{ 
                       backgroundColor: c, 
-                      borderColor: color === c ? '#475569' : 'transparent' 
+                      borderColor: color === c ? '#3b82f6' : 'transparent' 
                     }}
                   />
                 ))}
@@ -222,86 +234,127 @@ export default function AccountList({
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs font-semibold py-2 rounded-sm transition duration-200 shadow-sm mt-2"
+              className="w-full bg-gradient-to-r from-sky-500 to-indigo-500 hover:from-sky-600 hover:to-indigo-650 text-white text-xs font-semibold py-2 rounded-sm transition duration-200 shadow-sm mt-2 cursor-pointer"
             >
               {editingAccount ? 'Save Changes' : 'Create Account'}
             </button>
           </form>
         )}
 
-        <div className="space-y-2">
-          {/* Individual accounts */}
-          {accounts.map(acc => {
-            const balances = calculatedBalances[acc.id] || { current: acc.initialBalance, reconciled: acc.initialBalance };
-            const isSelected = selectedAccountId === acc.id;
-            const TypeIcon = ACCOUNT_TYPES.find(t => t.value === acc.type)?.icon || Wallet;
+        <div className="space-y-3.5">
+          {[
+            { name: 'CASH', label: 'CASH', types: ['Checking', 'Savings', 'Cash'] },
+            { name: 'CREDIT', label: 'CREDIT', types: ['Credit Card'] },
+            { name: 'TRACKING', label: 'TRACKING', types: ['Investment', 'Other'] }
+          ].map(group => {
+            const groupAccounts = accounts.filter(acc => group.types.includes(acc.type));
+            if (groupAccounts.length === 0) return null;
+
+            const isCollapsed = collapsedGroups[group.name];
+            const groupSum = groupAccounts.reduce((sum, acc) => {
+              const balances = calculatedBalances[acc.id] || { current: acc.initialBalance, reconciled: acc.initialBalance };
+              return sum + balances.current;
+            }, 0);
 
             return (
-              <div 
-                key={acc.id}
-                className={`relative group rounded border transition-all duration-200 ${
-                  isSelected 
-                    ? 'bg-white border-[#e4e2d9] shadow-sm text-slate-900 font-semibold' 
-                    : 'bg-transparent border-transparent text-slate-600 hover:bg-[#eae8df]/50'
-                }`}
-              >
-                <div
-                  onClick={() => onSelectAccount(acc.id)}
-                  className="w-full text-left p-3.5 flex items-center justify-between cursor-pointer"
-                  id={`account-btn-${acc.id}`}
+              <div key={group.name} className="space-y-1">
+                {/* Group Heading Header Row */}
+                <button
+                  type="button"
+                  onClick={() => toggleGroup(group.name)}
+                  className="w-full flex items-center justify-between py-1.5 px-1 hover:bg-white/5 rounded text-left transition select-none cursor-pointer text-slate-350 hover:text-white"
                 >
-                  <div className="flex items-center gap-3 pr-8">
-                    <div 
-                      className="p-1.5 rounded-sm text-white font-semibold"
-                      style={{ backgroundColor: acc.color }}
-                    >
-                      <TypeIcon size={15} />
-                    </div>
-                    <div className="truncate max-w-[130px]">
-                      <span className="font-sans font-semibold text-xs text-slate-800 block truncate">{acc.name}</span>
-                      <span className="text-[10px] font-mono text-slate-500 block">{acc.type}</span>
-                      {acc.reconciliationDate && (
-                        <div className="text-[9px] font-mono text-emerald-600 flex items-center gap-1 mt-0.5 truncate" title={`Last reconciled: ${acc.reconciliationDate}`}>
-                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-550 shrink-0"></span>
-                          <span>{acc.reconciliationDate}</span>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                  <div className="text-right">
-                    <span className="text-xs font-mono font-semibold text-slate-800 block">
-                      {formatCurrency(balances.current)}
-                    </span>
-                    <span className="text-[9px] font-mono text-slate-500 block">
-                      Rec: {formatCurrency(balances.reconciled)}
+                  <div className="flex items-center gap-1">
+                    {isCollapsed ? (
+                      <ChevronRight size={13} className="text-slate-400 shrink-0" />
+                    ) : (
+                      <ChevronDown size={13} className="text-slate-400 shrink-0" />
+                    )}
+                    <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-slate-350">
+                      {group.label}
                     </span>
                   </div>
-                </div>
+                  <div>
+                    {groupSum < 0 ? (
+                      <span className="bg-rose-500/20 border border-rose-500/30 text-rose-300 px-2 py-0.5 rounded-full font-bold font-mono text-[10px]">
+                        {formatCurrency(groupSum)}
+                      </span>
+                    ) : (
+                      <span className="font-mono font-bold text-slate-100 text-[10.5px]">
+                        {formatCurrency(groupSum)}
+                      </span>
+                    )}
+                  </div>
+                </button>
 
-                {/* Operations tools */}
-                <div className="absolute top-3.5 right-3 opacity-0 group-hover:opacity-100 flex gap-1 bg-white pl-1 py-1 px-1.5 rounded border border-slate-200 transition duration-150 shadow-sm">
-                  <button
-                    onClick={(e) => { e.stopPropagation(); startEdit(acc); }}
-                    className="p-1 hover:bg-slate-100 rounded-sm text-slate-400 hover:text-slate-800"
-                    title="Edit account details"
-                  >
-                    <Edit size={11} />
-                  </button>
-                  {accounts.length > 1 && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        if (confirm(`Delete the "${acc.name}" account? This deletes all associated transactions!`)) {
-                          onDeleteAccount(acc.id);
-                        }
-                      }}
-                      className="p-1 hover:bg-rose-50 rounded-sm text-slate-400 hover:text-rose-600"
-                      title="Delete account"
-                    >
-                      <Trash2 size={11} />
-                    </button>
-                  )}
-                </div>
+                {/* Sub-list of group's accounts nested and indented */}
+                {!isCollapsed && (
+                  <div className="space-y-1 pl-3 border-l border-white/10 ml-2 animate-fadeIn">
+                    {groupAccounts.map(acc => {
+                      const balances = calculatedBalances[acc.id] || { current: acc.initialBalance, reconciled: acc.initialBalance };
+                      const isSelected = selectedAccountId === acc.id;
+
+                      return (
+                        <div 
+                          key={acc.id}
+                          className={`relative group rounded border transition-all duration-200 ${
+                            isSelected 
+                              ? 'bg-[#2a2f58] border-white/15 shadow-sm text-white font-semibold' 
+                              : 'bg-transparent border-transparent text-slate-300 hover:bg-white/5'
+                          }`}
+                        >
+                          <div
+                            onClick={() => onSelectAccount(acc.id)}
+                            className="w-full text-left p-2.5 flex items-center justify-between cursor-pointer"
+                            id={`account-btn-${acc.id}`}
+                          >
+                            <div className="flex items-center pr-8 truncate">
+                              <span className={`font-sans text-[12px] truncate ${isSelected ? 'text-white font-bold' : 'text-slate-200'}`}>
+                                {acc.name}
+                              </span>
+                            </div>
+                            <div className="text-right shrink-0 font-mono">
+                              {balances.current < 0 ? (
+                                <span className="bg-rose-950/45 border border-rose-500/30 text-rose-300 px-1.5 py-0.5 rounded font-bold font-mono text-[10.5px]">
+                                  {formatCurrency(balances.current)}
+                                </span>
+                              ) : (
+                                <span className={`text-[12px] font-semibold block ${isSelected ? 'text-white' : 'text-slate-200'}`}>
+                                  {formatCurrency(balances.current)}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Hover Operations widget */}
+                          <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 flex gap-1 bg-[#202544] pl-1 py-1 px-1.5 rounded border border-white/10 transition duration-150 shadow-sm">
+                            <button
+                              onClick={(e) => { e.stopPropagation(); startEdit(acc); }}
+                              className="p-1 hover:bg-white/10 rounded-sm text-slate-400 hover:text-white cursor-pointer"
+                              title="Edit account details"
+                            >
+                              <Edit size={11} />
+                            </button>
+                            {accounts.length > 1 && (
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  if (confirm(`Delete the "${acc.name}" account? This deletes all associated transactions!`)) {
+                                    onDeleteAccount(acc.id);
+                                  }
+                                }}
+                                className="p-1 hover:bg-rose-500/20 rounded-sm text-slate-400 hover:text-rose-400 cursor-pointer"
+                                title="Delete account"
+                              >
+                                <Trash2 size={11} />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             );
           })}
