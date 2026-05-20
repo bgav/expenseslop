@@ -2,7 +2,8 @@ import React, { useState, useMemo } from 'react';
 import { Transaction, Account } from '../types';
 import { 
   Search, ArrowUpDown, CheckCircle, Circle, Trash2, Edit, AlertCircle, 
-  ArrowRightLeft, Filter, Calendar, X, RefreshCw, ChevronLeft, ChevronRight 
+  ArrowRightLeft, Filter, Calendar, X, RefreshCw, ChevronLeft, ChevronRight,
+  Lock
 } from 'lucide-react';
 
 interface TransactionLedgerProps {
@@ -11,6 +12,7 @@ interface TransactionLedgerProps {
   selectedAccountId: string | null;
   onUpdateTransaction: (tx: Transaction) => void;
   onDeleteTransaction: (txId: string) => void;
+  onReconcileTransactions: (txIds: string[], reconciliationDate: string) => void;
 }
 
 type SortField = 'date' | 'payee' | 'category' | 'memo' | 'outflow' | 'inflow' | 'reconciled';
@@ -21,12 +23,13 @@ export default function TransactionLedger({
   accounts,
   selectedAccountId,
   onUpdateTransaction,
-  onDeleteTransaction
+  onDeleteTransaction,
+  onReconcileTransactions
 }: TransactionLedgerProps) {
   // Query/filter states
   const [search, setSearch] = useState('');
   const [categoryFilter, setCategoryFilter] = useState('');
-  const [reconciledFilter, setReconciledFilter] = useState<'all' | 'reconciled' | 'unreconciled'>('all');
+  const [reconciledFilter, setReconciledFilter] = useState<'all' | 'reconciled' | 'cleared' | 'uncleared'>('all');
   const [dateFrom, setDateFrom] = useState('');
   const [dateTo, setDateTo] = useState('');
   
@@ -41,6 +44,14 @@ export default function TransactionLedger({
   // Inline editing state
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editForm, setEditForm] = useState<Partial<Transaction>>({});
+
+  // Selection states
+  const [selectedTxIds, setSelectedTxIds] = useState<Set<string>>(new Set());
+
+  // Reset selection when account filter changes
+  React.useEffect(() => {
+    setSelectedTxIds(new Set());
+  }, [selectedAccountId]);
 
   // Reset filters
   const resetFilters = () => {
@@ -90,8 +101,10 @@ export default function TransactionLedger({
     // Filter by reconciled status
     if (reconciledFilter === 'reconciled') {
       result = result.filter(t => t.reconciled);
-    } else if (reconciledFilter === 'unreconciled') {
-      result = result.filter(t => !t.reconciled);
+    } else if (reconciledFilter === 'cleared') {
+      result = result.filter(t => t.cleared && !t.reconciled);
+    } else if (reconciledFilter === 'uncleared') {
+      result = result.filter(t => !t.cleared && !t.reconciled);
     }
 
     // Filter by date range
@@ -137,6 +150,34 @@ export default function TransactionLedger({
     return processedTransactions.slice(start, start + itemsPerPage);
   }, [processedTransactions, page]);
 
+  const handleSelectAllToggle = () => {
+    const allOnPageSelected = paginatedTransactions.length > 0 && paginatedTransactions.every(tx => selectedTxIds.has(tx.id));
+    const nextSet = new Set(selectedTxIds);
+    if (allOnPageSelected) {
+      paginatedTransactions.forEach(tx => nextSet.delete(tx.id));
+    } else {
+      paginatedTransactions.forEach(tx => nextSet.add(tx.id));
+    }
+    setSelectedTxIds(nextSet);
+  };
+
+  const toggleSelectTransaction = (txId: string) => {
+    const nextSet = new Set(selectedTxIds);
+    if (nextSet.has(txId)) {
+      nextSet.delete(txId);
+    } else {
+      nextSet.add(txId);
+    }
+    setSelectedTxIds(nextSet);
+  };
+
+  const handleBulkReconcile = () => {
+    if (selectedTxIds.size === 0) return;
+    const currentDate = new Date().toISOString().split('T')[0];
+    onReconcileTransactions(Array.from(selectedTxIds), currentDate);
+    setSelectedTxIds(new Set());
+  };
+
   const toggleSort = (field: SortField) => {
     if (sortField === field) {
       setSortOrder(prev => (prev === 'asc' ? 'desc' : 'asc'));
@@ -148,9 +189,27 @@ export default function TransactionLedger({
   };
 
   const toggleReconciliation = (tx: Transaction) => {
+    let newCleared = false;
+    let newReconciled = false;
+
+    if (tx.reconciled) {
+      // Reconciled -> Uncleared for testing
+      newCleared = false;
+      newReconciled = false;
+    } else if (tx.cleared) {
+      // Cleared -> Uncleared
+      newCleared = false;
+      newReconciled = false;
+    } else {
+      // Uncleared -> Cleared
+      newCleared = true;
+      newReconciled = false;
+    }
+
     onUpdateTransaction({
       ...tx,
-      reconciled: !tx.reconciled
+      cleared: newCleared,
+      reconciled: newReconciled
     });
   };
 
@@ -212,29 +271,42 @@ export default function TransactionLedger({
             <div className="bg-slate-100 border border-slate-200 rounded-sm p-0.5 flex">
               <button
                 onClick={() => setReconciledFilter('all')}
-                className={`px-3 py-1.5 text-[10px] font-mono font-medium rounded-sm transition-all duration-150 ${
+                className={`px-2.5 py-1.5 text-[10px] font-mono font-medium rounded-sm transition-all duration-150 ${
                   reconciledFilter === 'all' ? 'bg-sky-655 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
                 All Statuses
               </button>
               <button
-                onClick={() => setReconciledFilter('reconciled')}
-                className={`px-3 py-1.5 text-[10px] font-mono font-medium rounded-sm transition-all duration-150 flex items-center gap-1 ${
-                  reconciledFilter === 'reconciled' ? 'bg-sky-655 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                onClick={() => setReconciledFilter('uncleared')}
+                className={`px-2.5 py-1.5 text-[10px] font-mono font-medium rounded-sm transition-all duration-150 flex items-center gap-1.5 ${
+                  reconciledFilter === 'uncleared' ? 'bg-sky-655 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
-                <CheckCircle size={10} className={reconciledFilter === 'reconciled' ? "text-white" : "text-emerald-600"} />
+                <span className={`w-3.5 h-3.5 rounded-full border flex items-center justify-center text-[8px] font-extrabold font-sans leading-none ${
+                  reconciledFilter === 'uncleared' ? "border-sky-300 text-sky-100" : "border-slate-400 text-slate-500"
+                }`}>c</span>
+                Uncleared
+              </button>
+              <button
+                onClick={() => setReconciledFilter('cleared')}
+                className={`px-2.5 py-1.5 text-[10px] font-mono font-medium rounded-sm transition-all duration-150 flex items-center gap-1.5 ${
+                  reconciledFilter === 'cleared' ? 'bg-sky-655 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                }`}
+              >
+                <span className={`w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] font-extrabold font-sans leading-none ${
+                  reconciledFilter === 'cleared' ? "bg-white text-sky-600" : "bg-emerald-600 text-white"
+                }`}>c</span>
                 Cleared
               </button>
               <button
-                onClick={() => setReconciledFilter('unreconciled')}
-                className={`px-3 py-1.5 text-[10px] font-mono font-medium rounded-sm transition-all duration-150 flex items-center gap-1 ${
-                  reconciledFilter === 'unreconciled' ? 'bg-sky-655 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'
+                onClick={() => setReconciledFilter('reconciled')}
+                className={`px-2.5 py-1.5 text-[10px] font-mono font-medium rounded-sm transition-all duration-150 flex items-center gap-1.5 ${
+                  reconciledFilter === 'reconciled' ? 'bg-sky-655 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
-                <AlertCircle size={10} className={reconciledFilter === 'unreconciled' ? "text-white" : "text-amber-600"} />
-                Uncleared
+                <Lock size={10} className={reconciledFilter === 'reconciled' ? "text-white" : "text-emerald-700"} />
+                Reconciled
               </button>
             </div>
 
@@ -290,12 +362,47 @@ export default function TransactionLedger({
         </div>
       </div>
 
+      {/* Selection & Reconcile Active Bar */}
+      {selectedTxIds.size > 0 && (
+        <div className="bg-emerald-50 border-b border-emerald-250 px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fadeIn text-xs text-emerald-800 font-sans" id="reconcile-action-bar">
+          <div className="flex items-center gap-2">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse shrink-0"></span>
+            <span>
+              <strong>{selectedTxIds.size}</strong> transaction{selectedTxIds.size > 1 ? 's' : ''} selected for reconciliation
+            </span>
+          </div>
+          <div className="flex flex-wrap items-center gap-3">
+            <button
+              onClick={handleBulkReconcile}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-sans font-semibold text-xs px-4 py-2 rounded-sm transition flex items-center gap-1.5 shadow-sm active:scale-95 cursor-pointer leading-none"
+            >
+              <CheckCircle size={14} className="text-white" />
+              Reconcile
+            </button>
+            <button
+              onClick={() => setSelectedTxIds(new Set())}
+              className="text-slate-500 hover:text-slate-800 font-mono text-[10px] hover:underline"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Transaction Table */}
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="border-b border-slate-200 bg-slate-50 text-[11px] font-mono text-slate-500 uppercase tracking-wider select-none">
-              <th className="py-3.5 px-4 w-12 text-center">Status</th>
+              <th className="py-3.5 px-4 w-12 text-center">
+                <input
+                  type="checkbox"
+                  checked={paginatedTransactions.length > 0 && paginatedTransactions.every(tx => selectedTxIds.has(tx.id))}
+                  onChange={handleSelectAllToggle}
+                  className="rounded border-slate-350 text-sky-600 focus:ring-sky-500 hover:border-slate-450 cursor-pointer h-3.5 w-3.5 transition"
+                  title="Select all visible transactions"
+                />
+              </th>
               <th className="py-3.5 px-3 w-28 cursor-pointer hover:bg-slate-100 hover:text-slate-800 transition" onClick={() => toggleSort('date')}>
                 <div className="flex items-center gap-1">
                   Date
@@ -335,13 +442,14 @@ export default function TransactionLedger({
                   <ArrowUpDown size={11} className="text-slate-400" />
                 </div>
               </th>
+              <th className="py-3.5 px-4 w-12 text-center">Status</th>
               <th className="py-3.5 px-4 w-20 text-center">Actions</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-200 text-xs text-slate-700">
             {paginatedTransactions.length === 0 ? (
-              <tr>
-                <td colSpan={10} className="py-12 text-center text-slate-500 font-sans">
+               <tr>
+                <td colSpan={11} className="py-12 text-center text-slate-500 font-sans">
                   <div className="max-w-xs mx-auto space-y-3">
                     <p className="text-slate-500 font-mono text-xs">No matching transactions.</p>
                     <button
@@ -367,19 +475,13 @@ export default function TransactionLedger({
                     } ${isEditing ? 'bg-sky-50/45' : ''}`}
                   >
                     <td className="py-3.5 px-4 text-center">
-                      <button
-                        onClick={() => toggleReconciliation(tx)}
-                        className="p-1 rounded text-slate-400 hover:text-emerald-600 transition duration-150 focus:outline-none cursor-pointer"
-                        title={tx.reconciled ? "Clear Cleared/Reconciled status" : "Mark as Cleared/Reconciled"}
-                      >
-                        {tx.reconciled ? (
-                          <CheckCircle size={15} className="text-emerald-600" />
-                        ) : (
-                          <Circle size={15} className="text-slate-400 hover:border-slate-600" />
-                        )}
-                      </button>
+                      <input
+                        type="checkbox"
+                        checked={selectedTxIds.has(tx.id)}
+                        onChange={() => toggleSelectTransaction(tx.id)}
+                        className="rounded border-slate-350 text-sky-600 focus:ring-sky-500 hover:border-slate-450 cursor-pointer h-3.5 w-3.5 transition"
+                      />
                     </td>
-
                     <td className="py-3.5 px-3 font-mono font-medium text-slate-600">
                       {isEditing ? (
                         <input
@@ -492,6 +594,33 @@ export default function TransactionLedger({
                       ) : (
                         currencyFormatter(tx.inflow)
                       )}
+                    </td>
+                    <td className="py-3.5 px-4 text-center">
+                      <button
+                        onClick={() => toggleReconciliation(tx)}
+                        className="flex items-center justify-center mx-auto focus:outline-none cursor-pointer hover:scale-105 transition"
+                        title={
+                          tx.reconciled 
+                            ? "Reconciled (Click to reset)" 
+                            : tx.cleared 
+                              ? "Cleared (Click to reconcile)" 
+                              : "Uncleared (Click to clear)"
+                        }
+                      >
+                        {tx.reconciled ? (
+                          <div className="w-5 h-5 flex items-center justify-center text-emerald-600">
+                            <Lock size={14} className="fill-current text-emerald-600" />
+                          </div>
+                        ) : tx.cleared ? (
+                          <div className="w-5 h-5 rounded-full bg-emerald-600 flex items-center justify-center text-[10px] font-sans font-extrabold text-white shadow-sm leading-none">
+                            C
+                          </div>
+                        ) : (
+                          <div className="w-5 h-5 rounded-full border border-slate-400 flex items-center justify-center text-[10px] font-sans font-extrabold text-slate-400 hover:border-slate-600 hover:text-slate-600 transition leading-none">
+                            C
+                          </div>
+                        )}
+                      </button>
                     </td>
                     <td className="py-3.5 px-4 text-center">
                       <div className="flex items-center justify-center gap-1.5">

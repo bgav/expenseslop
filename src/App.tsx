@@ -15,7 +15,8 @@ import RecurringEngine from './components/RecurringEngine';
 import CategoryManager from './components/CategoryManager';
 import KeyboardShortcutsHelp from './components/KeyboardShortcutsHelp';
 import { 
-  Download, Upload, CalendarClock, Trash2, Landmark, HelpCircle, Sparkles, CheckSquare, RefreshCw, Layers, Tag 
+  Download, Upload, CalendarClock, Trash2, Landmark, HelpCircle, Sparkles, CheckSquare, RefreshCw, Layers, Tag,
+  Star, CreditCard, Lock
 } from 'lucide-react';
 
 export default function App() {
@@ -143,6 +144,86 @@ export default function App() {
     return selectedAccountId ? accounts.find(a => a.id === selectedAccountId) || null : null;
   }, [selectedAccountId, accounts]);
 
+  // Helpmates for YNAB-style Account Summary Header Dashboard
+  const formatAmount = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount);
+  };
+
+  const getRelativeDateString = (dateStr: string | undefined) => {
+    if (!dateStr) return 'Not reconciled yet';
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const recDate = new Date(dateStr);
+    recDate.setHours(0, 0, 0, 0);
+    
+    const diffTime = today.getTime() - recDate.getTime();
+    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 0) return 'Reconciled today';
+    if (diffDays === 1) return 'Reconciled yesterday';
+    if (diffDays < 0) return `Reconciled on ${dateStr}`;
+    return `Reconciled ${diffDays} days ago`;
+  };
+
+  const clearedSum = useMemo(() => {
+    if (selectedAccountId !== null) {
+      const active = accounts.find(a => a.id === selectedAccountId);
+      if (!active) return 0;
+      let sum = active.initialBalance;
+      transactions.forEach(tx => {
+        if (tx.accountId === selectedAccountId && (tx.cleared || tx.reconciled)) {
+          sum += (tx.inflow - tx.outflow);
+        }
+      });
+      return sum;
+    } else {
+      let sum = accounts.reduce((total, acc) => total + acc.initialBalance, 0);
+      transactions.forEach(tx => {
+        if (tx.cleared || tx.reconciled) {
+          sum += (tx.inflow - tx.outflow);
+        }
+      });
+      return sum;
+    }
+  }, [transactions, accounts, selectedAccountId]);
+
+  const unclearedSum = useMemo(() => {
+    if (selectedAccountId !== null) {
+      let sum = 0;
+      transactions.forEach(tx => {
+        if (tx.accountId === selectedAccountId && !tx.cleared && !tx.reconciled) {
+          sum += (tx.inflow - tx.outflow);
+        }
+      });
+      return sum;
+    } else {
+      let sum = 0;
+      transactions.forEach(tx => {
+        if (!tx.cleared && !tx.reconciled) {
+          sum += (tx.inflow - tx.outflow);
+        }
+      });
+      return sum;
+    }
+  }, [transactions, selectedAccountId]);
+
+  const workingSum = useMemo(() => {
+    return clearedSum + unclearedSum;
+  }, [clearedSum, unclearedSum]);
+
+  const getMostRecentReconciliationDateStr = () => {
+    const reconciledAccs = accounts.filter(a => a.reconciliationDate);
+    if (reconciledAccs.length === 0) return 'Not reconciled yet';
+    const sorted = [...reconciledAccs].sort((a, b) => {
+      return new Date(b.reconciliationDate!).getTime() - new Date(a.reconciliationDate!).getTime();
+    });
+    const latestDate = sorted[0].reconciliationDate;
+    return getRelativeDateString(latestDate);
+  };
+
   // Operations: ADD TRANSACTION
   const handleAddTransaction = async (txData: Omit<Transaction, 'id'>, targetAccountId?: string) => {
     const mainId = 'tx-' + generateId();
@@ -199,6 +280,43 @@ export default function App() {
 
     setTransactions(updated);
     await saveTransactions(updated);
+  };
+
+  // Operations: BULK RECONCILE TRANSACTIONS
+  const handleReconcileTransactions = async (txIds: string[], reconciliationDate: string) => {
+    // 1. Update selected transactions: cleared = true, reconciled = true
+    const updated = transactions.map(tx => {
+      if (txIds.includes(tx.id)) {
+        return {
+          ...tx,
+          cleared: true,
+          reconciled: true
+        };
+      }
+      return tx;
+    });
+
+    // 2. We also need to find the unique account IDs of these transactions and store reconciliationDate on those accounts!
+    const updatedTxObjs = transactions.filter(tx => txIds.includes(tx.id));
+    const targetAccountIds = Array.from(new Set(updatedTxObjs.map(tx => tx.accountId)));
+
+    const updatedAccounts = accounts.map(acc => {
+      if (targetAccountIds.includes(acc.id)) {
+        return {
+          ...acc,
+          reconciliationDate: reconciliationDate
+        };
+      }
+      return acc;
+    });
+
+    setTransactions(updated);
+    setAccounts(updatedAccounts);
+
+    await saveTransactions(updated);
+    await saveAccounts(updatedAccounts);
+
+    showStatusNotification(`Reconciled ${txIds.length} transactions and logged date on accounts.`);
   };
 
   // Operations: DELETE TRANSACTION
@@ -626,21 +744,111 @@ export default function App() {
               />
 
               {/* Transactions Panel containing search, filtration & page views */}
-              <div className="space-y-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500">
-                      Account Entries
-                    </h3>
-                    {selectedAccountId !== null && (
-                      <span className="px-2 py-0.5 bg-sky-500/10 text-sky-400 border border-sky-500/20 text-[10px] font-mono rounded-sm font-medium">
-                        {activeAccount?.name} only
+              <div className="space-y-4">
+                {/* YNAB-style Account Summary Header Dashboard */}
+                <div className="bg-white rounded border border-[#e4e2d9] p-5 shadow-sm space-y-4 relative animate-fadeIn" id="account-ledger-header-panel">
+                  {/* Account Name & Metas Row */}
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <h2 className="text-xl md:text-2xl font-bold font-sans tracking-tight text-slate-800">
+                          {selectedAccountId !== null ? activeAccount?.name : "All Accounts"}
+                        </h2>
+                        <button 
+                          className="text-amber-400 hover:text-amber-500 transition cursor-pointer" 
+                          aria-label="Favorite account indicator"
+                        >
+                          <Star size={18} className="fill-current text-amber-400 stroke-amber-500" />
+                        </button>
+                      </div>
+                      
+                      <div className="flex flex-wrap items-center gap-2 text-slate-500 text-[11.5px] font-mono select-none">
+                        <div className="flex items-center gap-1 justify-start">
+                          {selectedAccountId !== null ? (
+                            <>
+                              <CreditCard size={13} className="text-slate-400" />
+                              <span className="capitalize">{activeAccount?.type}</span>
+                            </>
+                          ) : (
+                            <>
+                              <Landmark size={13} className="text-slate-400" />
+                              <span>Combined Cashflow Ledger</span>
+                            </>
+                          )}
+                        </div>
+                        
+                        <span className="text-slate-300">•</span>
+
+                        <div className="flex items-center gap-1 text-emerald-600">
+                          <Lock size={12} className="text-emerald-550 shrink-0" />
+                          <span className="font-semibold">
+                            {selectedAccountId !== null 
+                              ? getRelativeDateString(activeAccount?.reconciliationDate) 
+                              : getMostRecentReconciliationDateStr()
+                            }
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="text-right shrink-0 select-none">
+                      <span className="text-[10px] font-mono uppercase bg-slate-100 border border-slate-200 text-slate-500 px-2 py-1 rounded-sm">
+                        {selectedAccountId !== null 
+                          ? `${transactions.filter(t => t.accountId === selectedAccountId).length} items recorded` 
+                          : `${transactions.length} items logged`
+                        }
                       </span>
-                    )}
+                    </div>
                   </div>
-                  <span className="text-[11px] font-mono text-slate-500">
-                    {transactions.length} items logged
-                  </span>
+
+                  <div className="border-b border-slate-150"></div>
+
+                  {/* Math Formula Group: Cleared Balance + Uncleared Balance = Working Balance */}
+                  <div className="flex flex-wrap items-center gap-y-4 gap-x-8 sm:gap-x-12 pt-1 select-none text-slate-800">
+                    
+                    {/* Cleared Balance */}
+                    <div className="space-y-1">
+                      <div className={`text-xl md:text-2xl font-mono font-bold tracking-tight ${clearedSum < 0 ? 'text-red-500' : 'text-slate-800'}`}>
+                        {formatAmount(clearedSum)}
+                      </div>
+                      <div className="text-[10.5px] font-mono text-slate-500 font-bold uppercase tracking-wide flex items-center gap-1.5 mt-1 select-none">
+                        <span className="w-3.5 h-3.5 rounded-full bg-slate-700 text-[8px] font-sans font-extrabold text-white flex items-center justify-center leading-none select-none">C</span>
+                        Cleared Balance
+                      </div>
+                    </div>
+
+                    {/* Plus */}
+                    <div className="text-slate-400 text-lg font-bold font-mono select-none px-1">
+                      +
+                    </div>
+
+                    {/* Uncleared Balance */}
+                    <div className="space-y-1">
+                      <div className={`text-xl md:text-2xl font-mono font-bold tracking-tight ${unclearedSum < 0 ? 'text-red-500' : 'text-slate-800'}`}>
+                        {formatAmount(unclearedSum)}
+                      </div>
+                      <div className="text-[10.5px] font-mono text-slate-500 font-bold uppercase tracking-wide flex items-center gap-1.5 mt-1 select-none">
+                        <span className="w-3.5 h-3.5 rounded-full border border-slate-400 text-[8px] font-sans font-extrabold text-slate-500 flex items-center justify-center leading-none select-none">C</span>
+                        Uncleared Balance
+                      </div>
+                    </div>
+
+                    {/* Equals */}
+                    <div className="text-slate-400 text-lg font-bold font-mono select-none px-1">
+                      =
+                    </div>
+
+                    {/* Working Balance */}
+                    <div className="space-y-1">
+                      <div className={`text-xl md:text-2xl font-mono font-bold tracking-tight ${workingSum < 0 ? 'text-red-650' : 'text-slate-900'}`}>
+                        {formatAmount(workingSum)}
+                      </div>
+                      <div className="text-[10.5px] font-sans text-slate-650 font-bold uppercase tracking-wide flex items-center gap-1.5 mt-1 select-none">
+                        Working Balance
+                      </div>
+                    </div>
+
+                  </div>
                 </div>
 
                 <TransactionLedger 
@@ -649,6 +857,7 @@ export default function App() {
                   selectedAccountId={selectedAccountId}
                   onUpdateTransaction={handleUpdateTransaction}
                   onDeleteTransaction={handleDeleteTransaction}
+                  onReconcileTransactions={handleReconcileTransactions}
                 />
               </div>
             </>

@@ -280,6 +280,12 @@ export default function AccountList({
                     <div className="truncate max-w-[130px]">
                       <span className="font-sans font-semibold text-xs text-slate-800 block truncate">{acc.name}</span>
                       <span className="text-[10px] font-mono text-slate-500 block">{acc.type}</span>
+                      {acc.reconciliationDate && (
+                        <div className="text-[9px] font-mono text-emerald-600 flex items-center gap-1 mt-0.5 truncate" title={`Last reconciled: ${acc.reconciliationDate}`}>
+                          <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-550 shrink-0"></span>
+                          <span>{acc.reconciliationDate}</span>
+                        </div>
+                      )}
                     </div>
                   </div>
                   <div className="text-right">

@@ -7,6 +7,7 @@ export interface Account {
   initialBalance: number;
   color: string;
   createdAt: string;
+  reconciliationDate?: string; // Stored date of last reconciliation
 }
 
 export interface Transaction {
@@ -19,6 +20,7 @@ export interface Transaction {
   outflow: number;            // Expense amount (>= 0)
   inflow: number;             // Income amount (>= 0)
   reconciled: boolean;        // Reconciled flag
+  cleared?: boolean;          // Cleared flag for three-state: uncleared, cleared, reconciled
   transferAccountId?: string; // Linked account ID if this is a transfer
   transferTxId?: string;      // Coupled transaction ID
   isRecurringInstance?: boolean; // Flag to trace if it was auto-generated
