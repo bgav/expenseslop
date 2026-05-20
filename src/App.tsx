@@ -596,7 +596,7 @@ export default function App() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#f4f3ed] text-slate-800 font-sans" id="applet-root-container">
+    <div className="flex flex-col min-h-screen md:h-screen md:overflow-hidden bg-[#f4f3ed] text-slate-800 font-sans" id="applet-root-container">
       
       {/* Toast Alert Banner */}
       {notification && (
@@ -701,10 +701,10 @@ export default function App() {
       </header>
 
       {/* Primary Workspace Layout Pane Split */}
-      <div className="flex flex-col md:flex-row flex-1" id="main-panes-split-container">
+      <div className="flex flex-col md:flex-row flex-1 md:min-h-0" id="main-panes-split-container">
         
         {/* Left Side: Accounts & shortcut guide pane */}
-        <aside className="w-full md:w-80 flex-shrink-0 bg-[#161a36] text-slate-100 p-5 md:p-6 space-y-6 border-r border-[#202544] flex flex-col justify-start" id="accounts-sidebar-pane">
+        <aside className="w-full md:w-80 flex-shrink-0 bg-[#161a36] text-slate-100 p-5 md:p-6 space-y-6 border-r border-[#202544] flex flex-col justify-start md:overflow-y-auto" id="accounts-sidebar-pane">
           
           <AccountList 
             accounts={accounts}
