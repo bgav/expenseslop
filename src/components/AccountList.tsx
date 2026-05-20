@@ -107,13 +107,13 @@ export default function AccountList({
   return (
     <div className="space-y-6" id="account-sidebar-container">
       {/* Total net worth card */}
-      <div className="bg-white rounded-2xl border border-[#e4e2d9] p-5 shadow-sm space-y-3">
+      <div className="bg-white rounded border border-[#e4e2d9] p-5 shadow-sm space-y-3">
         <span className="text-xs font-mono font-medium text-slate-500 uppercase tracking-wider block">Net Assets Balance</span>
         <div className="flex items-baseline justify-between">
           <h2 className="text-3xl font-display font-bold tracking-tight text-slate-805 font-semibold">
             {formatCurrency(totalNetWorth)}
           </h2>
-          <span className="text-[10px] bg-sky-50 text-sky-700 border border-sky-100 rounded px-1.5 py-0.5 font-mono">Total Liquid</span>
+          <span className="text-[10px] bg-sky-50 text-sky-700 border border-sky-100 rounded-sm px-1.5 py-0.5 font-mono">Total Liquid</span>
         </div>
         <div className="flex justify-between items-center pt-3 border-t border-slate-200 text-[10px] text-slate-500 font-mono">
           <span className="flex items-center gap-1">
@@ -130,7 +130,7 @@ export default function AccountList({
       {/* Standalone All Accounts button above Accounts label */}
       <button
         onClick={() => onSelectAccount(null)}
-        className={`w-full text-left p-3.5 rounded-xl border transition-all duration-200 flex items-center justify-between group ${
+        className={`w-full text-left p-3.5 rounded border transition-all duration-200 flex items-center justify-between group ${
           selectedAccountId === null
             ? 'bg-sky-50/50 border-sky-400 shadow-sm ring-1 ring-sky-500/10 text-slate-900 font-semibold'
             : 'bg-white border-[#e4e2d9] text-slate-700 hover:bg-slate-50 shadow-sm'
@@ -138,7 +138,7 @@ export default function AccountList({
         id="account-btn-all"
       >
         <div className="flex items-center gap-3">
-          <div className={`p-1.5 rounded-lg ${selectedAccountId === null ? 'bg-sky-100 text-sky-600' : 'bg-slate-100 text-slate-500'}`}>
+          <div className={`p-1.5 rounded-sm ${selectedAccountId === null ? 'bg-sky-100 text-sky-600' : 'bg-slate-100 text-slate-500'}`}>
             <Landmark size={15} />
           </div>
           <div>
@@ -159,7 +159,7 @@ export default function AccountList({
           <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500">Accounts</h3>
           <button
             onClick={() => { resetForm(); setIsFormOpen(true); }}
-            className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition duration-150 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
+            className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded transition duration-150 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
             title="Add Account (Alt+A)"
             id="add-account-btn"
           >
@@ -169,7 +169,7 @@ export default function AccountList({
 
         {/* Form to Create/Edit Account */}
         {isFormOpen && (
-          <form onSubmit={handleSubmit} className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3 animate-fadeIn">
+          <form onSubmit={handleSubmit} className="bg-slate-50 border border-slate-200 rounded p-4 space-y-3 animate-fadeIn">
             <div className="flex justify-between items-center pb-1 border-b border-slate-200">
               <span className="text-xs font-semibold text-slate-800">
                 {editingAccount ? 'Edit Account' : 'New Account'}
@@ -190,7 +190,7 @@ export default function AccountList({
                 value={name}
                 onChange={e => setName(e.target.value)}
                 placeholder="e.g. Chase Checkings"
-                className="w-full text-xs bg-white rounded-lg border border-slate-300 p-2 text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:outline-none"
+                className="w-full text-xs bg-white rounded-sm border border-slate-300 p-2 text-slate-800 placeholder-slate-400 focus:ring-2 focus:ring-sky-500/20 focus:border-sky-500 focus:outline-none"
                 required
                 autoFocus
               />
@@ -202,7 +202,7 @@ export default function AccountList({
                 <select
                   value={type}
                   onChange={e => setType(e.target.value as AccountType)}
-                  className="w-full text-xs bg-white rounded-lg border border-slate-300 p-2 text-slate-800 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                  className="w-full text-xs bg-white rounded-sm border border-slate-300 p-2 text-slate-800 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
                 >
                   {ACCOUNT_TYPES.map(t => (
                     <option key={t.value} value={t.value}>{t.label}</option>
@@ -217,7 +217,7 @@ export default function AccountList({
                   step="0.01"
                   value={initialBalance}
                   onChange={e => setInitialBalance(parseFloat(e.target.value) || 0)}
-                  className="w-full text-xs bg-white rounded-lg border border-slate-300 p-2 text-slate-800 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
+                  className="w-full text-xs bg-white rounded-sm border border-slate-300 p-2 text-slate-800 focus:outline-none focus:border-sky-500 focus:ring-2 focus:ring-sky-500/20"
                 />
               </div>
             </div>
@@ -242,7 +242,7 @@ export default function AccountList({
 
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs font-semibold py-2 rounded-lg transition duration-200 shadow-sm mt-2"
+              className="w-full bg-gradient-to-r from-sky-600 to-indigo-600 hover:from-sky-700 hover:to-indigo-700 text-white text-xs font-semibold py-2 rounded-sm transition duration-200 shadow-sm mt-2"
             >
               {editingAccount ? 'Save Changes' : 'Create Account'}
             </button>
@@ -259,7 +259,7 @@ export default function AccountList({
             return (
               <div 
                 key={acc.id}
-                className={`relative group rounded-xl border transition-all duration-200 ${
+                className={`relative group rounded border transition-all duration-200 ${
                   isSelected 
                     ? 'bg-sky-50/50 border-sky-400 shadow-sm ring-1 ring-sky-500/10 text-slate-900 font-semibold' 
                     : 'bg-white border-[#e4e2d9] text-slate-705 hover:bg-slate-50 shadow-sm'
@@ -272,7 +272,7 @@ export default function AccountList({
                 >
                   <div className="flex items-center gap-3 pr-8">
                     <div 
-                      className="p-1.5 rounded-lg text-white font-semibold"
+                      className="p-1.5 rounded-sm text-white font-semibold"
                       style={{ backgroundColor: acc.color }}
                     >
                       <TypeIcon size={15} />
@@ -293,10 +293,10 @@ export default function AccountList({
                 </div>
 
                 {/* Operations tools */}
-                <div className="absolute top-3.5 right-3 opacity-0 group-hover:opacity-100 flex gap-1 bg-white pl-1 py-1 px-1.5 rounded-lg border border-slate-200 transition duration-150 shadow-sm">
+                <div className="absolute top-3.5 right-3 opacity-0 group-hover:opacity-100 flex gap-1 bg-white pl-1 py-1 px-1.5 rounded border border-slate-200 transition duration-150 shadow-sm">
                   <button
                     onClick={(e) => { e.stopPropagation(); startEdit(acc); }}
-                    className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-800"
+                    className="p-1 hover:bg-slate-100 rounded-sm text-slate-400 hover:text-slate-800"
                     title="Edit account details"
                   >
                     <Edit size={11} />
@@ -309,7 +309,7 @@ export default function AccountList({
                           onDeleteAccount(acc.id);
                         }
                       }}
-                      className="p-1 hover:bg-rose-50 rounded text-slate-400 hover:text-rose-600"
+                      className="p-1 hover:bg-rose-50 rounded-sm text-slate-400 hover:text-rose-600"
                       title="Delete account"
                     >
                       <Trash2 size={11} />

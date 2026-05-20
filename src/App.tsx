@@ -482,7 +482,7 @@ export default function App() {
       
       {/* Toast Alert Banner */}
       {notification && (
-        <div className="fixed bottom-6 right-6 z-50 bg-white/95 backdrop-blur-md text-slate-800 text-xs font-mono px-4 py-3 rounded-xl shadow-2xl border border-sky-500/30 flex items-center gap-2">
+        <div className="fixed bottom-6 right-6 z-50 bg-white/95 backdrop-blur-md text-slate-800 text-xs font-mono px-4 py-3 rounded border border-sky-500/30 flex items-center gap-2 shadow-sm">
           <Sparkles size={14} className="text-sky-600 animate-pulse" />
           <span>{notification}</span>
         </div>
@@ -494,13 +494,13 @@ export default function App() {
           
           {/* Logo Title area representation */}
           <div className="flex items-center gap-3">
-            <div className="h-10 w-10 bg-gradient-to-br from-sky-500 to-indigo-600 rounded-xl flex items-center justify-center text-white font-mono font-bold shadow-md shadow-indigo-500/5">
+            <div className="h-10 w-10 bg-gradient-to-br from-sky-500 to-indigo-600 rounded flex items-center justify-center text-white font-mono font-bold shadow-sm">
               <Landmark size={20} className="text-white" />
             </div>
             <div>
               <h1 className="text-base font-display font-bold text-slate-900 tracking-tight flex items-center gap-2">
                 Personal Expense Tracker
-                <span className="text-[10px] font-mono bg-sky-50 text-sky-700 border border-sky-100 rounded px-2 py-0.5">
+                <span className="text-[10px] font-mono bg-sky-50 text-sky-700 border border-sky-100 rounded-sm px-2 py-0.5">
                   Offline-Native DB
                 </span>
               </h1>
@@ -514,7 +514,7 @@ export default function App() {
           <div className="flex flex-wrap items-center gap-2">
             
             {/* JSON Import/Export */}
-            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded-xl p-1">
+            <div className="flex items-center gap-1.5 bg-slate-50 border border-slate-200 rounded p-1">
               <input 
                 type="file"
                 ref={fileInputRef}
@@ -525,7 +525,7 @@ export default function App() {
               />
               <button
                 onClick={() => fileInputRef.current?.click()}
-                className="flex items-center gap-1.5 hover:bg-slate-200 hover:text-slate-900 text-slate-700 text-[11px] font-mono font-semibold px-3 py-2 rounded-lg transition cursor-pointer"
+                className="flex items-center gap-1.5 hover:bg-slate-200 hover:text-slate-900 text-slate-700 text-[11px] font-mono font-semibold px-3 py-2 rounded-sm transition cursor-pointer"
                 title="Import backup JSON file (Alt+I)"
               >
                 <Upload size={13} />
@@ -536,7 +536,7 @@ export default function App() {
 
               <button
                 onClick={handleExportBackup}
-                className="flex items-center gap-1.5 hover:bg-slate-200 hover:text-slate-900 text-slate-700 text-[11px] font-mono font-semibold px-3 py-2 rounded-lg transition cursor-pointer"
+                className="flex items-center gap-1.5 hover:bg-slate-200 hover:text-slate-900 text-slate-700 text-[11px] font-mono font-semibold px-3 py-2 rounded-sm transition cursor-pointer"
                 title="Export database states instantly (Alt+E)"
               >
                 <Download size={13} />
@@ -547,13 +547,13 @@ export default function App() {
             {/* Recurring task button triggers config modal */}
             <button
               onClick={() => setIsRecurringOpen(true)}
-              className="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-[11px] font-semibold px-3.5 py-2.5 rounded-xl transition cursor-pointer shadow-sm relative animate-fadeIn"
+              className="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-[11px] font-semibold px-3.5 py-2.5 rounded transition cursor-pointer shadow-sm relative animate-fadeIn"
               title="Recurring Transaction Generator Panel (Alt+R)"
             >
               <CalendarClock size={13} className="text-sky-600" />
               <span>Standing Engine</span>
               {recurringRules.filter(r => r.isActive).length > 0 && (
-                <span className="absolute -top-1.5 -right-1 px-1.5 py-0.5 bg-sky-600 text-white rounded-full text-[8px] font-mono leading-none shadow-sm pb-1">
+                <span className="absolute -top-1.5 -right-1 px-1.5 py-0.5 bg-sky-600 text-white rounded-sm text-[8px] font-mono leading-none shadow-sm pb-1">
                   {recurringRules.filter(r => r.isActive).length}
                 </span>
               )}
@@ -562,7 +562,7 @@ export default function App() {
             {/* Category manager button triggers config modal */}
             <button
               onClick={() => setIsCategoryManagerOpen(true)}
-              className="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-[11px] font-semibold px-3.5 py-2.5 rounded-xl transition cursor-pointer shadow-sm relative animate-fadeIn"
+              className="flex items-center gap-1.5 bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 text-[11px] font-semibold px-3.5 py-2.5 rounded transition cursor-pointer shadow-sm relative animate-fadeIn"
               title="Category Management Customizer Panel (Alt+C)"
             >
               <Tag size={13} className="text-sky-600" />
@@ -572,7 +572,7 @@ export default function App() {
             {/* Hard Reset */}
             <button
               onClick={handleClearDatabase}
-              className="p-2.5 hover:bg-red-500/10 text-slate-400 hover:text-red-500 border border-transparent hover:border-red-200 rounded-xl transition cursor-pointer"
+              className="p-2.5 hover:bg-red-500/10 text-slate-400 hover:text-red-500 border border-transparent hover:border-red-200 rounded transition cursor-pointer"
               title="Wipe database tables"
             >
               <Trash2 size={13} />
@@ -606,7 +606,7 @@ export default function App() {
         <section className="col-span-1 lg:col-span-4 space-y-6" id="main-ledger-section">
           
           {accounts.length === 0 ? (
-            <div className="bg-white border border-[#e4e2d9] rounded-2xl p-12 text-center text-slate-600 shadow-sm relative animate-fadeIn">
+            <div className="bg-white border border-[#e4e2d9] rounded p-12 text-center text-slate-600 shadow-sm relative animate-fadeIn">
               <Landmark size={48} className="mx-auto text-slate-400 stroke-1 mb-4" />
               <h3 className="font-display font-semibold text-slate-800 mb-1">No Operational Account Found</h3>
               <p className="text-xs text-slate-550 max-w-sm mx-auto mb-4 font-sans">
@@ -633,7 +633,7 @@ export default function App() {
                       Account Entries
                     </h3>
                     {selectedAccountId !== null && (
-                      <span className="px-2 py-0.5 bg-sky-500/10 text-sky-400 border border-sky-500/20 text-[10px] font-mono rounded font-medium">
+                      <span className="px-2 py-0.5 bg-sky-500/10 text-sky-400 border border-sky-500/20 text-[10px] font-mono rounded-sm font-medium">
                         {activeAccount?.name} only
                       </span>
                     )}

@@ -265,15 +265,15 @@ export default function TransactionForm({
   const otherAccounts = accounts.filter(a => a.id !== accountId);
 
   return (
-    <div className="bg-white rounded-2xl border border-[#e4e2d9] shadow-lg sticky top-4 z-40 p-5 text-slate-800" id="sticky-input-card">
+    <div className="bg-white rounded border border-[#e4e2d9] shadow-lg sticky top-4 z-40 p-5 text-slate-800" id="sticky-input-card">
       <div className="flex justify-between items-center mb-3.5">
         <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-600 flex items-center gap-1.5">
           <Sparkles size={13} className="text-sky-600 animate-pulse" />
           Rapid Manual Input Panel
         </h4>
         <div className="text-[10px] font-mono text-slate-500 flex items-center gap-3">
-          <span><kbd className="bg-slate-100 border border-slate-200 text-slate-700 px-1 py-0.5 rounded">Alt + N</kbd> to focus entry</span>
-          <span><kbd className="bg-slate-100 border border-slate-200 text-slate-700 px-1 py-0.5 rounded">Enter</kbd> to save</span>
+          <span><kbd className="bg-slate-100 border border-slate-200 text-slate-700 px-1 py-0.5 rounded-sm">Alt + N</kbd> to focus entry</span>
+          <span><kbd className="bg-slate-100 border border-slate-200 text-slate-700 px-1 py-0.5 rounded-sm">Enter</kbd> to save</span>
         </div>
       </div>
 
@@ -287,7 +287,7 @@ export default function TransactionForm({
           <select
             value={accountId}
             onChange={e => setAccountId(e.target.value)}
-            className="w-full text-xs font-sans bg-white border border-[#d2d0c5] text-slate-850 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-sky-500/10 focus:border-sky-500 cursor-pointer shadow-sm"
+            className="w-full text-xs font-sans bg-white border border-[#d2d0c5] text-slate-855 rounded-sm p-2.5 outline-none focus:ring-2 focus:ring-sky-500/10 focus:border-sky-500 cursor-pointer shadow-sm"
             tabIndex={1}
           >
             {accounts.map(acc => (
@@ -303,7 +303,7 @@ export default function TransactionForm({
             type="date"
             value={date}
             onChange={e => setDate(e.target.value)}
-            className="w-full text-xs font-mono bg-white border border-[#d2d0c5] text-slate-800 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-sky-500/10 focus:border-sky-500 shadow-sm"
+            className="w-full text-xs font-mono bg-white border border-[#d2d0c5] text-slate-800 rounded-sm p-2.5 outline-none focus:ring-2 focus:ring-sky-500/10 focus:border-sky-500 shadow-sm"
             required
             tabIndex={2}
           />
@@ -320,12 +320,12 @@ export default function TransactionForm({
             onKeyDown={handlePayeeKeyDown}
             onFocus={() => setShowPayeeSuggestions(true)}
             placeholder="Recipient / Vendor"
-            className="w-full text-xs bg-white border border-[#d2d0c5] text-slate-800 placeholder-slate-400 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-sky-500/10 focus:border-sky-500 shadow-sm"
+            className="w-full text-xs bg-white border border-[#d2d0c5] text-slate-808 placeholder-slate-400 rounded-sm p-2.5 outline-none focus:ring-2 focus:ring-sky-500/10 focus:border-sky-500 shadow-sm"
             tabIndex={3}
             autoComplete="off"
           />
           {showPayeeSuggestions && payee && finalPayeeSuggestions.length > 0 && (
-            <div className="absolute left-0 right-0 mt-1 bg-white border border-slate-250 rounded-xl shadow-2xl z-50 text-xs overflow-hidden py-1 max-h-52 text-slate-800">
+            <div className="absolute left-0 right-0 mt-1 bg-white border border-slate-250 rounded-sm shadow-2xl z-50 text-xs overflow-hidden py-1 max-h-52 text-slate-800">
               {finalPayeeSuggestions.map((p, idx) => (
                 <button
                    key={p}
@@ -349,7 +349,7 @@ export default function TransactionForm({
             <button
               type="button"
               onClick={onManageCategories}
-              className="text-[9px] font-mono text-sky-600 hover:text-sky-700 flex items-center gap-0.5 cursor-pointer focus:outline-none focus:ring-1 focus:ring-sky-500/20 px-1 py-0.5 rounded"
+              className="text-[9px] font-mono text-sky-600 hover:text-sky-700 flex items-center gap-0.5 cursor-pointer focus:outline-none focus:ring-1 focus:ring-sky-500/20 px-1 py-0.5 rounded-sm"
               title="Manage custom category list"
             >
               <Tag size={8} />
@@ -364,12 +364,12 @@ export default function TransactionForm({
             onKeyDown={handleCategoryKeyDown}
             onFocus={() => setShowCategorySuggestions(true)}
             placeholder="e.g. Shopping"
-            className="w-full text-xs bg-white border border-[#d2d0c5] text-slate-800 placeholder-slate-400 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-sky-500/10 focus:border-sky-500 shadow-sm"
+            className="w-full text-xs bg-white border border-[#d2d0c5] text-slate-808 placeholder-slate-400 rounded-sm p-2.5 outline-none focus:ring-2 focus:ring-sky-500/10 focus:border-sky-500 shadow-sm"
             tabIndex={4}
             autoComplete="off"
           />
           {showCategorySuggestions && finalCategorySuggestions.length > 0 && (
-            <div className="absolute left-0 right-0 mt-1 bg-white border border-slate-250 rounded-xl shadow-2xl z-50 text-xs overflow-hidden py-1 max-h-52 text-slate-800">
+            <div className="absolute left-0 right-0 mt-1 bg-white border border-slate-250 rounded-sm shadow-2xl z-50 text-xs overflow-hidden py-1 max-h-52 text-slate-800">
               {finalCategorySuggestions.map((c, idx) => (
                 <button
                   key={c}
@@ -394,7 +394,7 @@ export default function TransactionForm({
             value={memo}
             onChange={e => setMemo(e.target.value)}
             placeholder="Tags..."
-            className="w-full text-xs bg-white border border-[#d2d0c5] text-slate-800 placeholder-slate-400 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-sky-500/10 focus:border-sky-500 shadow-sm"
+            className="w-full text-xs bg-white border border-[#d2d0c5] text-slate-808 placeholder-slate-400 rounded-sm p-2.5 outline-none focus:ring-2 focus:ring-sky-500/10 focus:border-sky-500 shadow-sm"
             tabIndex={5}
           />
         </div>
@@ -408,7 +408,7 @@ export default function TransactionForm({
               value={outflow}
               onChange={e => handleFlowInput('outflow', e.target.value)}
               placeholder="0.00"
-              className="w-full text-xs font-mono bg-[#fff5f5] border border-rose-200 text-rose-700 placeholder-rose-300/60 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-rose-200/50 focus:border-rose-400 shadow-sm"
+              className="w-full text-xs font-mono bg-[#fff5f5] border border-rose-200 text-rose-700 placeholder-rose-300/60 rounded-sm p-2.5 outline-none focus:ring-2 focus:ring-rose-200/50 focus:border-rose-400 shadow-sm"
               tabIndex={6}
             />
           </div>
@@ -423,7 +423,7 @@ export default function TransactionForm({
               value={inflow}
               onChange={e => handleFlowInput('inflow', e.target.value)}
               placeholder="0.00"
-              className="w-full text-xs font-mono bg-[#f4fdf7] border border-emerald-200 text-emerald-750 placeholder-emerald-300/60 rounded-xl p-2.5 outline-none focus:ring-2 focus:ring-emerald-200/50 focus:border-emerald-400 shadow-sm"
+              className="w-full text-xs font-mono bg-[#f4fdf7] border border-emerald-200 text-emerald-755 placeholder-emerald-300/60 rounded-sm p-2.5 outline-none focus:ring-2 focus:ring-emerald-200/50 focus:border-emerald-400 shadow-sm"
               tabIndex={7}
             />
           </div>
@@ -433,7 +433,7 @@ export default function TransactionForm({
         <div className="md:col-span-1 flex items-end">
           <button
             type="submit"
-            className="w-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white text-xs font-sans font-semibold py-3.5 rounded-xl transition duration-150 flex items-center justify-center gap-1 cursor-pointer focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-md"
+            className="w-full bg-gradient-to-r from-sky-500 to-indigo-600 hover:from-sky-600 hover:to-indigo-700 text-white text-xs font-sans font-semibold py-3.5 rounded-sm transition duration-150 flex items-center justify-center gap-1 cursor-pointer focus:outline-none focus:ring-2 focus:ring-sky-500 shadow-md"
             tabIndex={9}
           >
             <Check size={14} />
@@ -449,7 +449,7 @@ export default function TransactionForm({
             type="checkbox"
             checked={reconciled}
             onChange={e => setReconciled(e.target.checked)}
-            className="rounded border-slate-300 text-sky-600 focus:ring-sky-500/20 bg-white"
+            className="rounded-sm border-slate-300 text-sky-600 focus:ring-sky-500/20 bg-white"
             tabIndex={8}
           />
           <span className="font-mono text-[11px] text-slate-500">Mark Reconciled immediately</span>
@@ -463,7 +463,7 @@ export default function TransactionForm({
               setIsTransfer(e.target.checked);
               if (e.target.checked) setCategory('Transfer');
             }}
-            className="rounded border-slate-300 text-sky-600 focus:ring-sky-500/20 bg-white"
+            className="rounded-sm border-slate-300 text-sky-600 focus:ring-sky-500/20 bg-white"
           />
           <span className="font-mono text-[11px] text-slate-500 flex items-center gap-1">
             <ArrowRightLeft size={12} className="text-slate-500" />
@@ -484,7 +484,7 @@ export default function TransactionForm({
                 }
               }}
               required
-              className="text-[11px] bg-white border border-slate-300 text-slate-800 rounded-md px-2 py-1 outline-none focus:border-sky-500 cursor-pointer shadow-sm"
+              className="text-[11px] bg-white border border-slate-300 text-slate-800 rounded-sm px-2 py-1 outline-none focus:border-sky-500 cursor-pointer shadow-sm"
             >
               <option value="">-- Select Target Account --</option>
               {otherAccounts.map(oa => (

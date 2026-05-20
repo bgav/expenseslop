@@ -89,12 +89,12 @@ export default function RecurringEngine({
 
   return (
     <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl border border-[#e4e2d9] overflow-hidden animate-fadeIn my-12">
+      <div className="bg-white rounded shadow-xl w-full max-w-2xl border border-[#e4e2d9] overflow-hidden animate-fadeIn my-12">
         
         {/* Header */}
         <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-gradient-to-tr from-sky-500 to-indigo-600 text-white rounded-xl shadow-sm">
+            <div className="p-2 bg-gradient-to-tr from-sky-500 to-indigo-600 text-white rounded shadow-sm">
               <CalendarClock size={18} />
             </div>
             <div>
@@ -104,7 +104,7 @@ export default function RecurringEngine({
           </div>
           <button 
             onClick={onClose}
-            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-700 transition cursor-pointer"
+            className="p-1.5 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-700 transition cursor-pointer"
           >
             <X size={16} />
           </button>
@@ -112,7 +112,7 @@ export default function RecurringEngine({
 
         <div className="p-6 space-y-6">
           {/* Quick info bar */}
-          <div className="bg-sky-50 border border-sky-100 rounded-xl p-3.5 flex gap-2.5 text-xs text-sky-850 font-sans">
+          <div className="bg-sky-50 border border-sky-100 rounded p-3.5 flex gap-2.5 text-xs text-sky-850 font-sans">
             <Info size={16} className="text-sky-600 shrink-0 mt-0.5" />
             <p>
               On app startup, the local keyboard database is matched against your defined rules.
@@ -127,7 +127,7 @@ export default function RecurringEngine({
             <div className="flex gap-2">
               <button
                 onClick={onForceTrigger}
-                className="flex items-center gap-1.5 bg-sky-50 hover:bg-sky-100 text-sky-600 text-xs font-semibold px-3 py-1.5 rounded-lg border border-sky-200 transition cursor-pointer"
+                className="flex items-center gap-1.5 bg-sky-50 hover:bg-sky-100 text-sky-600 text-xs font-semibold px-3 py-1.5 rounded-sm border border-sky-200 transition cursor-pointer"
                 title="Force-run generation pass on current rules"
               >
                 <Play size={12} className="fill-current" />
@@ -135,7 +135,7 @@ export default function RecurringEngine({
               </button>
               <button
                 onClick={() => setIsFormOpen(!isFormOpen)}
-                className="flex items-center gap-1.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:opacity-90 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer shadow-sm"
+                className="flex items-center gap-1.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:opacity-90 text-white text-xs font-semibold px-3 py-1.5 rounded-sm transition cursor-pointer shadow-sm"
               >
                 <Plus size={14} />
                 Create Standing Rule
@@ -145,7 +145,7 @@ export default function RecurringEngine({
 
           {/* Form to add Standing/Recurring Transaction */}
           {isFormOpen && (
-            <form onSubmit={handleSubmit} className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-4 animate-slideDown">
+            <form onSubmit={handleSubmit} className="bg-slate-50 border border-slate-200 rounded p-4 space-y-4 animate-slideDown">
               <div className="text-xs font-semibold text-slate-750 flex items-center gap-1">
                 <Sparkles size={13} className="text-yellow-600" />
                 Define Standing Rule Template
@@ -159,7 +159,7 @@ export default function RecurringEngine({
                   <select
                     value={accountId}
                     onChange={e => setAccountId(e.target.value)}
-                    className="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    className="w-full text-xs bg-white border border-slate-300 rounded-sm p-2 text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
                     required
                   >
                     {accounts.map(acc => (
@@ -177,7 +177,7 @@ export default function RecurringEngine({
                     onChange={e => setPayee(e.target.value)}
                     required
                     placeholder="Subscription or salary..."
-                    className="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    className="w-full text-xs bg-white border border-slate-300 rounded-sm p-2 text-slate-800 placeholder-slate-440 focus:outline-none focus:ring-1 focus:ring-sky-500"
                   />
                 </div>
 
@@ -192,7 +192,7 @@ export default function RecurringEngine({
                       onChange={e => setAmount(e.target.value)}
                       required
                       placeholder="0.00"
-                      className="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500 font-mono"
+                      className="w-full text-xs bg-white border border-slate-300 rounded-sm p-2 text-slate-800 placeholder-slate-440 focus:outline-none focus:ring-1 focus:ring-sky-500 font-mono"
                     />
                   </div>
                 </div>
@@ -203,7 +203,7 @@ export default function RecurringEngine({
                   <select
                     value={type}
                     onChange={e => setType(e.target.value as 'outflow' | 'inflow')}
-                    className="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    className="w-full text-xs bg-white border border-slate-300 rounded-sm p-2 text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
                   >
                     <option value="outflow">Outflow (Expense)</option>
                     <option value="inflow">Inflow (Income)</option>
@@ -216,7 +216,7 @@ export default function RecurringEngine({
                   <select
                     value={frequency}
                     onChange={e => setFrequency(e.target.value as RecurringFrequency)}
-                    className="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    className="w-full text-xs bg-white border border-slate-300 rounded-sm p-2 text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
                   >
                     <option value="daily">Daily</option>
                     <option value="weekly">Weekly</option>
@@ -234,7 +234,7 @@ export default function RecurringEngine({
                     value={startDate}
                     onChange={e => setStartDate(e.target.value)}
                     required
-                    className="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500 font-mono"
+                    className="w-full text-xs bg-white border border-slate-300 rounded-sm p-2 text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500 font-mono"
                   />
                 </div>
 
@@ -246,7 +246,7 @@ export default function RecurringEngine({
                     value={category}
                     onChange={e => setCategory(e.target.value)}
                     placeholder="Subscriptions, Salary, etc."
-                    className="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    className="w-full text-xs bg-white border border-slate-300 rounded-sm p-2 text-slate-805 placeholder-slate-440 focus:outline-none focus:ring-1 focus:ring-sky-500"
                   />
                 </div>
 
@@ -258,22 +258,22 @@ export default function RecurringEngine({
                     value={memo}
                     onChange={e => setMemo(e.target.value)}
                     placeholder=" Standing automated charge description..."
-                    className="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                    className="w-full text-xs bg-white border border-slate-300 rounded-sm p-2 text-slate-805 placeholder-slate-440 focus:outline-none focus:ring-1 focus:ring-sky-500"
                   />
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-202">
                 <button
                   type="button"
                   onClick={() => setIsFormOpen(false)}
-                  className="px-3 py-1.5 bg-white border border-slate-250 text-slate-600 hover:text-slate-800 rounded-lg text-xs cursor-pointer shadow-sm"
+                  className="px-3 py-1.5 bg-white border border-slate-250 text-slate-600 hover:text-slate-808 rounded-sm text-xs cursor-pointer shadow-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 bg-sky-650 hover:bg-sky-700 text-white rounded-lg text-xs font-semibold shadow-sm flex items-center gap-1 cursor-pointer"
+                  className="px-4 py-1.5 bg-sky-650 hover:bg-sky-700 text-white rounded-sm text-xs font-semibold shadow-sm flex items-center gap-1 cursor-pointer"
                 >
                   <Check size={14} />
                   Authorize Schedule
@@ -295,20 +295,20 @@ export default function RecurringEngine({
                 return (
                   <div 
                     key={r.id} 
-                    className={`p-4 border rounded-xl transition duration-150 relative group flex select-none flex-col sm:flex-row justify-between sm:items-center gap-3 ${
+                    className={`p-4 border rounded transition duration-150 relative group flex select-none flex-col sm:flex-row justify-between sm:items-center gap-3 ${
                       r.isActive ? 'bg-slate-50 border-slate-200 text-slate-800' : 'bg-slate-100/50 border-slate-200 opacity-60 text-slate-500'
                     }`}
                   >
                     <div className="space-y-1.5">
                       <div className="flex items-center gap-2">
                         <span className="text-xs font-bold text-slate-800">{r.payee}</span>
-                        <span className="text-[9px] font-mono bg-slate-200 border border-slate-300 text-slate-700 rounded-md px-1.5 py-0.5">
+                        <span className="text-[9px] font-mono bg-slate-200 border border-slate-300 text-slate-700 rounded-sm px-1.5 py-0.5">
                           {FREQUENCY_LABELS[r.frequency]}
                         </span>
                         {/* Account indicator */}
                         {associatedAcc && (
                           <span 
-                            className="text-[9px] font-mono font-medium text-white px-1.5 py-0.5 rounded-md border border-white/5"
+                            className="text-[9px] font-mono font-medium text-white px-1.5 py-0.5 rounded-sm border border-white/5"
                             style={{ backgroundColor: associatedAcc.color }}
                           >
                             {associatedAcc.name}

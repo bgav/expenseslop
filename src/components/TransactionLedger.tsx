@@ -182,7 +182,7 @@ export default function TransactionLedger({
   };
 
   return (
-    <div className="bg-white rounded-2xl border border-[#e4e2d9] shadow-lg overflow-hidden text-slate-850" id="ledger-card">
+    <div className="bg-white rounded border border-[#e4e2d9] shadow-lg overflow-hidden text-slate-850" id="ledger-card">
       
       {/* Search and Filters Header */}
       <div className="p-4 border-b border-slate-200 bg-slate-50/50 space-y-3">
@@ -194,7 +194,7 @@ export default function TransactionLedger({
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
               placeholder="Instant as-you-type search payee, memo, account..."
-              className="w-full pl-9 pr-4 py-2 text-xs bg-white rounded-xl border border-[#d2d0c5] text-slate-800 placeholder-slate-450 focus:outline-none focus:ring-2 focus:ring-sky-500/10 focus:border-sky-500 shadow-sm"
+              className="w-full pl-9 pr-4 py-2 text-xs bg-white rounded-sm border border-[#d2d0c5] text-slate-800 placeholder-slate-450 focus:outline-none focus:ring-2 focus:ring-sky-500/10 focus:border-sky-500 shadow-sm"
             />
             {search && (
               <button 
@@ -209,10 +209,10 @@ export default function TransactionLedger({
           <div className="flex flex-wrap items-center gap-2">
             
             {/* Reconciled Filter Toggles */}
-            <div className="bg-slate-100 border border-slate-200 rounded-xl p-0.5 flex">
+            <div className="bg-slate-100 border border-slate-200 rounded-sm p-0.5 flex">
               <button
                 onClick={() => setReconciledFilter('all')}
-                className={`px-3 py-1.5 text-[10px] font-mono font-medium rounded-lg transition-all duration-150 ${
+                className={`px-3 py-1.5 text-[10px] font-mono font-medium rounded-sm transition-all duration-150 ${
                   reconciledFilter === 'all' ? 'bg-sky-655 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
@@ -220,7 +220,7 @@ export default function TransactionLedger({
               </button>
               <button
                 onClick={() => setReconciledFilter('reconciled')}
-                className={`px-3 py-1.5 text-[10px] font-mono font-medium rounded-lg transition-all duration-150 flex items-center gap-1 ${
+                className={`px-3 py-1.5 text-[10px] font-mono font-medium rounded-sm transition-all duration-150 flex items-center gap-1 ${
                   reconciledFilter === 'reconciled' ? 'bg-sky-655 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
@@ -229,7 +229,7 @@ export default function TransactionLedger({
               </button>
               <button
                 onClick={() => setReconciledFilter('unreconciled')}
-                className={`px-3 py-1.5 text-[10px] font-mono font-medium rounded-lg transition-all duration-150 flex items-center gap-1 ${
+                className={`px-3 py-1.5 text-[10px] font-mono font-medium rounded-sm transition-all duration-150 flex items-center gap-1 ${
                   reconciledFilter === 'unreconciled' ? 'bg-sky-655 text-white shadow-sm' : 'text-slate-500 hover:text-slate-800'
                 }`}
               >
@@ -242,7 +242,7 @@ export default function TransactionLedger({
             {(search || categoryFilter || reconciledFilter !== 'all' || dateFrom || dateTo) && (
               <button
                 onClick={resetFilters}
-                className="flex items-center gap-1.5 text-[10px] font-mono text-slate-500 hover:text-red-500 bg-white border border-slate-200 px-3 py-1.5 rounded-lg hover:border-red-200 transition cursor-pointer shadow-sm"
+                className="flex items-center gap-1.5 text-[10px] font-mono text-slate-500 hover:text-red-500 bg-white border border-slate-200 px-3 py-1.5 rounded-sm hover:border-red-200 transition cursor-pointer shadow-sm"
               >
                 <RefreshCw size={11} />
                 Reset Filters
@@ -256,13 +256,11 @@ export default function TransactionLedger({
           <div className="flex items-center gap-1.5">
             <Filter size={12} className="text-slate-500" />
             <span className="text-slate-500 text-[10px] font-mono uppercase tracking-wider">Advanced:</span>
-          </div>
-
-          {/* Category drop */}
+          </div>          {/* Category drop */}
           <select
             value={categoryFilter}
             onChange={e => { setCategoryFilter(e.target.value); setPage(1); }}
-            className="text-xs bg-white border border-[#d2d0c5] rounded-xl px-2.5 py-1.5 outline-none focus:border-sky-500 text-slate-700 cursor-pointer shadow-sm"
+            className="text-xs bg-white border border-[#d2d0c5] rounded-sm px-2.5 py-1.5 outline-none focus:border-sky-500 text-slate-700 cursor-pointer shadow-sm"
           >
             <option value="">All Categories ({categoriesList.length})</option>
             {categoriesList.map(c => (
@@ -278,7 +276,7 @@ export default function TransactionLedger({
               value={dateFrom}
               onChange={e => { setDateFrom(e.target.value); setPage(1); }}
               placeholder="From"
-              className="text-xs bg-white border border-[#d2d0c5] rounded-xl px-2.5 py-1 text-slate-700 outline-none shadow-sm"
+              className="text-xs bg-white border border-[#d2d0c5] rounded-sm px-2.5 py-1 text-slate-700 outline-none shadow-sm"
             />
             <span className="text-[10px] text-slate-550 font-mono">to</span>
             <input
@@ -286,7 +284,7 @@ export default function TransactionLedger({
               value={dateTo}
               onChange={e => { setDateTo(e.target.value); setPage(1); }}
               placeholder="To"
-              className="text-xs bg-white border border-[#d2d0c5] rounded-xl px-2.5 py-1 text-slate-700 outline-none shadow-sm"
+              className="text-xs bg-white border border-[#d2d0c5] rounded-sm px-2.5 py-1 text-slate-700 outline-none shadow-sm"
             />
           </div>
         </div>
@@ -348,7 +346,7 @@ export default function TransactionLedger({
                     <p className="text-slate-500 font-mono text-xs">No matching transactions.</p>
                     <button
                       onClick={resetFilters}
-                      className="text-[10px] font-mono bg-white border border-slate-250 text-slate-700 px-3 py-1.5 rounded-xl hover:bg-slate-50 transition cursor-pointer shadow-sm"
+                      className="text-[10px] font-mono bg-white border border-slate-250 text-slate-700 px-3 py-1.5 rounded-sm hover:bg-slate-50 transition cursor-pointer shadow-sm"
                     >
                       Reset active queries
                     </button>
@@ -368,11 +366,10 @@ export default function TransactionLedger({
                       tx.reconciled ? 'bg-emerald-50/25' : ''
                     } ${isEditing ? 'bg-sky-50/45' : ''}`}
                   >
-                    {/* Status check (Toggle Reconciled) */}
                     <td className="py-3.5 px-4 text-center">
                       <button
                         onClick={() => toggleReconciliation(tx)}
-                        className="p-1 rounded-full text-slate-400 hover:text-emerald-600 transition duration-150 focus:outline-none cursor-pointer"
+                        className="p-1 rounded text-slate-400 hover:text-emerald-600 transition duration-150 focus:outline-none cursor-pointer"
                         title={tx.reconciled ? "Clear Cleared/Reconciled status" : "Mark as Cleared/Reconciled"}
                       >
                         {tx.reconciled ? (
@@ -383,14 +380,13 @@ export default function TransactionLedger({
                       </button>
                     </td>
 
-                    {/* Date */}
                     <td className="py-3.5 px-3 font-mono font-medium text-slate-600">
                       {isEditing ? (
                         <input
                           type="date"
                           value={editForm.date || ''}
                           onChange={e => setEditForm({ ...editForm, date: e.target.value })}
-                          className="text-xs font-mono border border-slate-300 rounded-lg p-1.5 w-full bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                          className="text-xs font-mono border border-slate-300 rounded-sm p-1.5 w-full bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
                         />
                       ) : (
                         tx.date
@@ -399,29 +395,27 @@ export default function TransactionLedger({
                     {selectedAccountId === null && (
                       <td className="py-3.5 px-3">
                         <span 
-                          className="px-2 py-0.5 rounded-md text-[10px] font-mono font-medium text-white truncate max-w-[120px] block border border-white/5"
+                          className="px-2 py-0.5 rounded-sm text-[10px] font-mono font-medium text-white truncate max-w-[120px] block border border-white/5"
                           style={{ backgroundColor: sourceAcc?.color || '#cbd5e1' }}
                         >
                           {sourceAcc?.name || 'Unknown'}
                         </span>
                       </td>
                     )}
-
-                    {/* Payee */}
                     <td className="py-3.5 px-4">
                       {isEditing ? (
                         <input
                           type="text"
                           value={editForm.payee || ''}
                           onChange={e => setEditForm({ ...editForm, payee: e.target.value })}
-                          className="text-xs border border-slate-300 rounded-lg p-1.5 w-full bg-white text-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
+                          className="text-xs border border-slate-300 rounded-sm p-1.5 w-full bg-white text-slate-808 focus:outline-none focus:ring-1 focus:ring-sky-500"
                         />
                       ) : (
                         <div className="space-y-0.5">
                           <div className="font-semibold text-slate-800 flex items-center gap-1.5">
                             {tx.payee}
                             {isRecurring && (
-                              <span className="text-[9px] bg-sky-50 border border-sky-100 text-sky-700 rounded px-1.5 font-mono">
+                              <span className="text-[9px] bg-sky-50 border border-sky-100 text-sky-700 rounded-sm px-1.5 font-mono">
                                 Recurring
                               </span>
                             )}
@@ -442,7 +436,6 @@ export default function TransactionLedger({
                       )}
                     </td>
 
-                    {/* Category */}
                     <td className="py-3.5 px-3">
                       {isEditing ? (
                         <input
@@ -458,7 +451,6 @@ export default function TransactionLedger({
                       )}
                     </td>
 
-                    {/* Memo */}
                     <td className="py-3.5 px-3 text-slate-600">
                       {isEditing ? (
                         <input
@@ -472,7 +464,6 @@ export default function TransactionLedger({
                       )}
                     </td>
 
-                    {/* Outflow */}
                     <td className="py-3.5 px-3 text-right font-mono font-semibold text-rose-600">
                       {isEditing ? (
                         <input
@@ -488,7 +479,6 @@ export default function TransactionLedger({
                       )}
                     </td>
 
-                    {/* Inflow */}
                     <td className="py-3.5 px-3 text-right font-mono font-semibold text-emerald-700">
                       {isEditing ? (
                         <input
@@ -503,21 +493,19 @@ export default function TransactionLedger({
                         currencyFormatter(tx.inflow)
                       )}
                     </td>
-
-                    {/* Actions */}
                     <td className="py-3.5 px-4 text-center">
                       <div className="flex items-center justify-center gap-1.5">
                         {isEditing ? (
                           <>
                             <button
                               onClick={saveInlineEdit}
-                              className="px-2 py-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-lg text-[10px] font-sans font-semibold hover:scale-105 transition duration-155 cursor-pointer"
+                              className="px-2 py-1 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-600 hover:to-teal-700 text-white rounded-sm text-[10px] font-sans font-semibold hover:scale-105 transition duration-155 cursor-pointer"
                             >
                               Save
                             </button>
                             <button
                               onClick={cancelInlineEdit}
-                              className="px-2 py-1 bg-slate-100 hover:bg-slate-200 text-slate-600 rounded-lg text-[10px] font-sans font-medium transition cursor-pointer"
+                              className="px-2 py-1 bg-slate-100 hover:bg-slate-202 text-slate-600 rounded-sm text-[10px] font-sans font-medium transition cursor-pointer"
                             >
                               Esc
                             </button>
@@ -526,7 +514,7 @@ export default function TransactionLedger({
                           <>
                             <button
                               onClick={() => startInlineEdit(tx)}
-                              className="p-1 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-800 transition duration-150 cursor-pointer"
+                              className="p-1 hover:bg-slate-100 rounded-sm text-slate-400 hover:text-slate-800 transition duration-150 cursor-pointer"
                               title="Edit transaction info"
                             >
                               <Edit size={12} />
@@ -537,7 +525,7 @@ export default function TransactionLedger({
                                   onDeleteTransaction(tx.id);
                                 }
                               }}
-                              className="p-1 hover:bg-rose-50 rounded text-slate-400 hover:text-rose-600 transition duration-150 cursor-pointer"
+                              className="p-1 hover:bg-rose-50 rounded-sm text-slate-400 hover:text-rose-600 transition duration-150 cursor-pointer"
                               title="Delete transaction record"
                             >
                               <Trash2 size={12} />
@@ -552,11 +540,9 @@ export default function TransactionLedger({
             )}
           </tbody>
         </table>
-      </div>
-
-      {/* Pagination Footer */}
+      </div>      {/* Pagination Footer */}
       {totalPages > 1 && (
-        <div className="bg-slate-50/50 border-t border-slate-200 px-4 py-3 flex items-center justify-between">
+        <div className="bg-slate-50/50 border-t border-slate-202 px-4 py-3 flex items-center justify-between">
           <span className="text-xs text-slate-500 font-mono">
             Showing {(page - 1) * itemsPerPage + 1} - {Math.min(page * itemsPerPage, processedTransactions.length)} of {processedTransactions.length} items
           </span>
@@ -564,7 +550,7 @@ export default function TransactionLedger({
             <button
               onClick={() => setPage(p => Math.max(p - 1, 1))}
               disabled={page === 1}
-              className="p-1 px-2.5 bg-white border border-slate-250 rounded-lg text-slate-600 hover:text-slate-900 hover:border-slate-350 disabled:opacity-30 disabled:hover:text-slate-650 transition text-xs font-semibold flex items-center gap-1 cursor-pointer shadow-sm"
+              className="p-1 px-2.5 bg-white border border-slate-250 rounded-sm text-slate-600 hover:text-slate-900 hover:border-slate-350 disabled:opacity-30 disabled:hover:text-slate-650 transition text-xs font-semibold flex items-center gap-1 cursor-pointer shadow-sm"
             >
               <ChevronLeft size={14} />
               Prev
@@ -575,7 +561,7 @@ export default function TransactionLedger({
             <button
               onClick={() => setPage(p => Math.min(p + 1, totalPages))}
               disabled={page === totalPages}
-              className="p-1 px-2.5 bg-white border border-slate-250 rounded-lg text-slate-600 hover:text-slate-900 hover:border-slate-350 disabled:opacity-30 disabled:hover:text-slate-650 transition text-xs font-semibold flex items-center gap-1 cursor-pointer shadow-sm"
+              className="p-1 px-2.5 bg-white border border-slate-250 rounded-sm text-slate-600 hover:text-slate-900 hover:border-slate-350 disabled:opacity-30 disabled:hover:text-slate-650 transition text-xs font-semibold flex items-center gap-1 cursor-pointer shadow-sm"
             >
               Next
               <ChevronRight size={14} />

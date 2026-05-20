@@ -13,7 +13,7 @@ export default function KeyboardShortcutsHelp() {
   ];
 
   return (
-    <div className="bg-white rounded-2xl border border-[#e4e2d9] p-5 shadow-sm space-y-4" id="keyboard-shortcuts-card">
+    <div className="bg-white rounded border border-[#e4e2d9] p-5 shadow-sm space-y-4" id="keyboard-shortcuts-card">
       <div className="flex items-center gap-2 border-b border-slate-200 pb-2">
         <Keyboard size={15} className="text-slate-400" />
         <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-705">
@@ -23,13 +23,13 @@ export default function KeyboardShortcutsHelp() {
 
       <div className="space-y-3">
         {SHORTCUTS.map((s, idx) => (
-          <div key={idx} className="flex items-center justify-between text-xs hover:bg-slate-50 rounded px-2 py-0.5 transition duration-150">
+          <div key={idx} className="flex items-center justify-between text-xs hover:bg-slate-50 rounded-sm px-2 py-0.5 transition duration-150">
             <span className="font-sans text-slate-600">{s.desc}</span>
             <div className="flex gap-1">
               {s.keys.map((k, kIdx) => (
                 <kbd
                   key={kIdx}
-                  className="bg-slate-50 border border-slate-200 text-slate-700 rounded-md px-1.5 py-0.5 text-[10px] font-mono font-semibold shadow-sm block"
+                  className="bg-slate-50 border border-slate-200 text-slate-700 rounded-sm px-1.5 py-0.5 text-[10px] font-mono font-semibold shadow-sm block"
                 >
                   {k}
                 </kbd>

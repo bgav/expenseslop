@@ -101,12 +101,12 @@ export default function CategoryManager({
 
   return (
     <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-sm z-50 flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl border border-[#e4e2d9] overflow-hidden animate-fadeIn my-12">
+      <div className="bg-white rounded shadow-xl w-full max-w-2xl border border-[#e4e2d9] overflow-hidden animate-fadeIn my-12">
         
         {/* Header */}
         <div className="p-5 border-b border-slate-200 flex items-center justify-between bg-slate-50">
           <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-gradient-to-tr from-sky-500 to-indigo-600 text-white rounded-xl shadow-sm">
+            <div className="p-2 bg-gradient-to-tr from-sky-500 to-indigo-600 text-white rounded shadow-sm">
               <Tag size={18} />
             </div>
             <div>
@@ -116,7 +116,7 @@ export default function CategoryManager({
           </div>
           <button 
             onClick={onClose}
-            className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-700 transition cursor-pointer"
+            className="p-1.5 hover:bg-slate-100 rounded text-slate-400 hover:text-slate-700 transition cursor-pointer"
           >
             <X size={16} />
           </button>
@@ -130,7 +130,7 @@ export default function CategoryManager({
             {!isFormOpen && (
               <button
                 onClick={() => setIsFormOpen(true)}
-                className="flex items-center gap-1.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:opacity-90 text-white text-xs font-semibold px-3 py-1.5 rounded-lg transition cursor-pointer shadow-sm"
+                className="flex items-center gap-1.5 bg-gradient-to-r from-sky-600 to-indigo-600 hover:opacity-90 text-white text-xs font-semibold px-3 py-1.5 rounded-sm transition cursor-pointer shadow-sm"
               >
                 <Plus size={14} />
                 Create New Category
@@ -140,7 +140,7 @@ export default function CategoryManager({
 
           {/* Create Form */}
           {isFormOpen && (
-            <form onSubmit={handleSubmit} className="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-4 animate-slideDown">
+            <form onSubmit={handleSubmit} className="bg-slate-50 border border-slate-200 rounded p-4 space-y-4 animate-slideDown">
               <div className="text-xs font-semibold text-slate-750 flex items-center gap-1">
                 <Sparkles size={13} className="text-yellow-600" />
                 Define Custom Category
@@ -156,7 +156,7 @@ export default function CategoryManager({
                     required
                     maxLength={32}
                     placeholder="e.g. Travel, Gym, Coffee..."
-                    className="w-full text-xs bg-white border border-slate-300 rounded-lg p-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500/20"
+                    className="w-full text-xs bg-white border border-slate-300 rounded-sm p-2 text-slate-800 placeholder-slate-400 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500/20"
                   />
                 </div>
 
@@ -181,17 +181,17 @@ export default function CategoryManager({
                 </div>
               </div>
 
-              <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
+              <div className="flex justify-end gap-2 pt-2 border-t border-slate-202">
                 <button
                   type="button"
                   onClick={() => setIsFormOpen(false)}
-                  className="px-3 py-1.5 bg-white border border-slate-250 text-slate-600 hover:text-slate-800 rounded-lg text-xs cursor-pointer shadow-sm"
+                  className="px-3 py-1.5 bg-white border border-slate-250 text-slate-600 hover:text-slate-808 rounded text-xs cursor-pointer shadow-sm"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 bg-sky-650 hover:bg-sky-700 text-white rounded-lg text-xs font-semibold shadow-sm flex items-center gap-1 cursor-pointer"
+                  className="px-4 py-1.5 bg-sky-650 hover:bg-sky-700 text-white rounded text-xs font-semibold shadow-sm flex items-center gap-1 cursor-pointer"
                 >
                   <Check size={14} />
                   Add Category
@@ -208,7 +208,7 @@ export default function CategoryManager({
               return (
                 <div 
                   key={c.id} 
-                  className="p-3 bg-slate-50/60 border border-slate-200 rounded-xl flex items-center justify-between gap-3 group"
+                  className="p-3 bg-slate-50/60 border border-slate-200 rounded flex items-center justify-between gap-3 group"
                 >
                   {isEditing ? (
                     <div className="flex-1 space-y-2 col-span-2">
@@ -216,7 +216,7 @@ export default function CategoryManager({
                         type="text"
                         value={editingName}
                         onChange={e => setEditingName(e.target.value)}
-                        className="w-full text-xs bg-white border border-slate-300 rounded-md p-1.5 text-slate-800 focus:outline-none focus:border-sky-500"
+                        className="w-full text-xs bg-white border border-slate-300 rounded-sm p-1.5 text-slate-855 focus:outline-none focus:border-sky-500"
                       />
                       <div className="flex flex-wrap gap-1 pt-0.5">
                         {PRESET_COLORS.map(color => (
