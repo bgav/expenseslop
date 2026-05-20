@@ -97,6 +97,8 @@ export default function TransactionLedger({
 
   // Custom Inline Calendar Popover states to bypass cross-origin iframe showPicker limitations
   const [showDatePickerPopover, setShowDatePickerPopover] = useState(false);
+  const [showDateFromPopover, setShowDateFromPopover] = useState(false);
+  const [showDateToPopover, setShowDateToPopover] = useState(false);
   const [calendarYear, setCalendarYear] = useState(() => new Date().getFullYear());
   const [calendarMonth, setCalendarMonth] = useState(() => new Date().getMonth());
 
@@ -117,6 +119,8 @@ export default function TransactionLedger({
   const accountSelectRef = React.useRef<HTMLSelectElement>(null);
   const dateInputRef = React.useRef<HTMLInputElement>(null);
   const dateSuggestionsRef = React.useRef<HTMLDivElement>(null);
+  const dateFromContainerRef = React.useRef<HTMLDivElement>(null);
+  const dateToContainerRef = React.useRef<HTMLDivElement>(null);
   const searchInputRef = React.useRef<HTMLInputElement>(null);
   const searchSuggestionsRef = React.useRef<HTMLDivElement>(null);
   const searchContainerRef = React.useRef<HTMLDivElement>(null);
@@ -157,6 +161,12 @@ export default function TransactionLedger({
       }
       if (dateSuggestionsRef.current && !dateSuggestionsRef.current.contains(event.target as Node)) {
         setShowDatePickerPopover(false);
+      }
+      if (dateFromContainerRef.current && !dateFromContainerRef.current.contains(event.target as Node)) {
+        setShowDateFromPopover(false);
+      }
+      if (dateToContainerRef.current && !dateToContainerRef.current.contains(event.target as Node)) {
+        setShowDateToPopover(false);
       }
     }
     document.addEventListener('mousedown', handleClickOutside);
@@ -1064,23 +1074,189 @@ export default function TransactionLedger({
           </select>
 
           {/* Date range filters */}
-          <div className="flex items-center gap-1.5 text-slate-450">
+          <div className="flex items-center gap-1.5 text-slate-450 z-[105]">
             <Calendar size={12} className="text-slate-500" />
-            <input
-              type="date"
-              value={activeDateFrom}
-              onChange={e => handleDateFromChange(e.target.value)}
-              placeholder="From"
-              className="text-xs bg-white border border-[#d2d0c5] rounded-sm px-2.5 py-1 text-slate-700 outline-none shadow-sm"
-            />
+            <div className="relative" ref={dateFromContainerRef}>
+              <input
+                type="text"
+                value={activeDateFrom}
+                onChange={e => handleDateFromChange(e.target.value)}
+                onFocus={() => {
+                  setShowDateFromPopover(true);
+                  setShowDateToPopover(false);
+                  const parts = activeDateFrom.split('-');
+                  if (parts.length === 3) {
+                    const y = parseInt(parts[0], 10);
+                    const m = parseInt(parts[1], 10) - 1;
+                    if (!isNaN(y) && !isNaN(m)) {
+                      setCalendarYear(y);
+                      setCalendarMonth(m);
+                    }
+                  } else {
+                    setCalendarYear(new Date().getFullYear());
+                    setCalendarMonth(new Date().getMonth());
+                  }
+                }}
+                placeholder="From (YYYY-MM-DD)"
+                className="text-xs bg-white border border-[#d2d0c5] rounded-sm px-2.5 py-1 text-slate-700 font-mono outline-none shadow-sm w-36"
+              />
+              {showDateFromPopover && (
+                <div className="absolute z-[110] top-[105%] left-0 mt-1 bg-white border border-slate-200 rounded-md shadow-2xl p-3 w-64 text-[11.5px] select-none text-slate-800 animate-fadeIn text-left leading-normal font-sans">
+                  {/* Month & Year Selection Header */}
+                  <div className="flex items-center justify-between font-bold mb-2 text-slate-700 bg-slate-50 py-1 px-1.5 rounded">
+                    <button
+                      type="button"
+                      onClick={handlePrevMonth}
+                      className="px-2 py-0.5 hover:bg-slate-200 rounded font-bold cursor-pointer transition text-[12px] leading-none"
+                    >
+                      &lsaquo;
+                    </button>
+                    <span className="text-xs">
+                      {monthsList[calendarMonth]} {calendarYear}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleNextMonth}
+                      className="px-2 py-0.5 hover:bg-slate-200 rounded font-bold cursor-pointer transition text-[12px] leading-none"
+                    >
+                      &rsaquo;
+                    </button>
+                  </div>
+
+                  {/* Day of names */}
+                  <div className="grid grid-cols-7 gap-1 text-center font-semibold text-slate-450 mb-1 text-[10px]">
+                    {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(wd => (
+                      <div key={wd}>{wd}</div>
+                    ))}
+                  </div>
+
+                  {/* Days Grid */}
+                  <div className="grid grid-cols-7 gap-1">
+                    {getCalendarDays(calendarYear, calendarMonth).map((dObj, idx) => {
+                      const isSelected = activeDateFrom === dObj.dateString;
+                      const isToday = (() => {
+                        const t = new Date();
+                        const matches = t.getFullYear() === calendarYear && t.getMonth() === calendarMonth && t.getDate() === dObj.day && dObj.isCurrentMonth;
+                        return matches;
+                      })();
+                      return (
+                        <button
+                          key={`${dObj.dateString}-${idx}`}
+                          type="button"
+                          onClick={() => {
+                            handleDateFromChange(dObj.dateString);
+                            setShowDateFromPopover(false);
+                          }}
+                          className={`py-1 text-center rounded transition font-mono text-[10px] leading-tight flex items-center justify-center ${
+                            !dObj.isCurrentMonth ? 'text-slate-300' : 'text-slate-700'
+                          } ${
+                            isSelected 
+                              ? 'bg-sky-600 text-white font-bold shadow-sm' 
+                              : isToday 
+                                ? 'bg-sky-100 text-sky-900 border border-sky-300 font-bold hover:bg-sky-200' 
+                                : 'hover:bg-slate-100 hover:text-slate-900 cursor-pointer'
+                          }`}
+                          style={{ minHeight: '1.75rem' }}
+                        >
+                          {dObj.day}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
             <span className="text-[10px] text-slate-550 font-mono">to</span>
-            <input
-              type="date"
-              value={activeDateTo}
-              onChange={e => handleDateToChange(e.target.value)}
-              placeholder="To"
-              className="text-xs bg-white border border-[#d2d0c5] rounded-sm px-2.5 py-1 text-slate-700 outline-none shadow-sm"
-            />
+            <div className="relative" ref={dateToContainerRef}>
+              <input
+                type="text"
+                value={activeDateTo}
+                onChange={e => handleDateToChange(e.target.value)}
+                onFocus={() => {
+                  setShowDateToPopover(true);
+                  setShowDateFromPopover(false);
+                  const parts = activeDateTo.split('-');
+                  if (parts.length === 3) {
+                    const y = parseInt(parts[0], 10);
+                    const m = parseInt(parts[1], 10) - 1;
+                    if (!isNaN(y) && !isNaN(m)) {
+                      setCalendarYear(y);
+                      setCalendarMonth(m);
+                    }
+                  } else {
+                    setCalendarYear(new Date().getFullYear());
+                    setCalendarMonth(new Date().getMonth());
+                  }
+                }}
+                placeholder="To (YYYY-MM-DD)"
+                className="text-xs bg-white border border-[#d2d0c5] rounded-sm px-2.5 py-1 text-slate-700 font-mono outline-none shadow-sm w-36"
+              />
+              {showDateToPopover && (
+                <div className="absolute z-[110] top-[105%] left-0 mt-1 bg-white border border-slate-200 rounded-md shadow-2xl p-3 w-64 text-[11.5px] select-none text-slate-800 animate-fadeIn text-left leading-normal font-sans">
+                  {/* Month & Year Selection Header */}
+                  <div className="flex items-center justify-between font-bold mb-2 text-slate-700 bg-slate-50 py-1 px-1.5 rounded">
+                    <button
+                      type="button"
+                      onClick={handlePrevMonth}
+                      className="px-2 py-0.5 hover:bg-slate-200 rounded font-bold cursor-pointer transition text-[12px] leading-none"
+                    >
+                      &lsaquo;
+                    </button>
+                    <span className="text-xs">
+                      {monthsList[calendarMonth]} {calendarYear}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleNextMonth}
+                      className="px-2 py-0.5 hover:bg-slate-200 rounded font-bold cursor-pointer transition text-[12px] leading-none"
+                    >
+                      &rsaquo;
+                    </button>
+                  </div>
+
+                  {/* Day of names */}
+                  <div className="grid grid-cols-7 gap-1 text-center font-semibold text-slate-450 mb-1 text-[10px]">
+                    {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map(wd => (
+                      <div key={wd}>{wd}</div>
+                    ))}
+                  </div>
+
+                  {/* Days Grid */}
+                  <div className="grid grid-cols-7 gap-1">
+                    {getCalendarDays(calendarYear, calendarMonth).map((dObj, idx) => {
+                      const isSelected = activeDateTo === dObj.dateString;
+                      const isToday = (() => {
+                        const t = new Date();
+                        const matches = t.getFullYear() === calendarYear && t.getMonth() === calendarMonth && t.getDate() === dObj.day && dObj.isCurrentMonth;
+                        return matches;
+                      })();
+                      return (
+                        <button
+                          key={`${dObj.dateString}-${idx}`}
+                          type="button"
+                          onClick={() => {
+                            handleDateToChange(dObj.dateString);
+                            setShowDateToPopover(false);
+                          }}
+                          className={`py-1 text-center rounded transition font-mono text-[10px] leading-tight flex items-center justify-center ${
+                            !dObj.isCurrentMonth ? 'text-slate-300' : 'text-slate-700'
+                          } ${
+                            isSelected 
+                              ? 'bg-sky-600 text-white font-bold shadow-sm' 
+                              : isToday 
+                                ? 'bg-sky-100 text-sky-900 border border-sky-300 font-bold hover:bg-sky-200' 
+                                : 'hover:bg-slate-100 hover:text-slate-900 cursor-pointer'
+                          }`}
+                          style={{ minHeight: '1.75rem' }}
+                        >
+                          {dObj.day}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>
@@ -1230,32 +1406,7 @@ export default function TransactionLedger({
 
                   {/* Custom Calendar Popover matching style and dodging cross-origin iframe security issue */}
                   {showDatePickerPopover && (
-                    <div className="absolute z-[110] top-[85%] left-3 mt-1 bg-white border border-slate-200 rounded shadow-2xl p-3 w-64 text-[11.5px] select-none text-slate-800 animate-fadeIn text-left leading-normal font-sans">
-                      {/* Top quick helpers */}
-                      <div className="grid grid-cols-3 gap-1 mb-2">
-                        <button
-                          type="button"
-                          onClick={() => selectQuickOffset(0)}
-                          className="py-1 px-1 text-center bg-slate-50 hover:bg-sky-50 hover:text-sky-850 font-medium rounded border border-slate-200 hover:border-sky-300 transition cursor-pointer text-[10px]"
-                        >
-                          Today
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => selectQuickOffset(-1)}
-                          className="py-1 px-1 text-center bg-slate-50 hover:bg-sky-50 hover:text-sky-850 font-medium rounded border border-slate-200 hover:border-sky-300 transition cursor-pointer text-[10px]"
-                        >
-                          Yesterday
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => selectQuickOffset(1)}
-                          className="py-1 px-1 text-center bg-slate-50 hover:bg-sky-50 hover:text-sky-850 font-medium rounded border border-slate-200 hover:border-sky-300 transition cursor-pointer text-[10px]"
-                        >
-                          Tomorrow
-                        </button>
-                      </div>
-
+                    <div className="absolute z-[110] top-[85%] left-3 mt-1 bg-white border border-slate-200 rounded-md shadow-2xl p-3 w-64 text-[11.5px] select-none text-slate-800 animate-fadeIn text-left leading-normal font-sans">
                       {/* Month & Year Selection Header */}
                       <div className="flex items-center justify-between font-bold mb-2 text-slate-700 bg-slate-50 py-1 px-1.5 rounded">
                         <button
