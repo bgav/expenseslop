@@ -27,23 +27,36 @@ export default function KeyboardShortcutsHelp() {
 
   return (
     <div 
-      className="lg:sticky lg:bottom-6 bg-white rounded border border-[#e4e2d9] shadow-sm overflow-hidden z-10 transition-all duration-300" 
+      className={`lg:sticky lg:bottom-6 rounded transition-all duration-300 overflow-hidden z-10 ${
+        isExpanded 
+          ? 'bg-white border border-[#e4e2d9] shadow-sm' 
+          : 'bg-transparent border border-transparent shadow-none'
+      }`}
       id="keyboard-shortcuts-card"
     >
       {/* Header Button (Toggler) */}
       <button
         onClick={toggleExpand}
-        className="w-full flex items-center justify-between p-4 bg-slate-50/50 hover:bg-slate-50 transition-colors duration-150 cursor-pointer text-left select-none outline-none focus:ring-1 focus:ring-sky-500/30 font-sans"
+        className={`w-full flex items-center justify-between p-3.5 transition-all duration-200 cursor-pointer text-left select-none outline-none font-sans rounded ${
+          isExpanded
+            ? 'text-slate-900 font-semibold bg-slate-50/60 border-b border-slate-100'
+            : 'bg-transparent text-slate-700 hover:bg-slate-200/40'
+        }`}
         aria-expanded={isExpanded}
         aria-label="Toggle Keyboard shortcuts guide"
       >
-        <div className="flex items-center gap-2">
-          <Keyboard size={15} className="text-slate-400 shrink-0" />
-          <h4 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-700">
-            Keyboard Swift Guide
-          </h4>
+        <div className="flex items-center gap-3">
+          <div className={`p-1.5 rounded-sm ${isExpanded ? 'bg-slate-700 text-white' : 'bg-slate-200 text-slate-650'}`}>
+            <Keyboard size={15} />
+          </div>
+          <div>
+            <span className="text-xs font-semibold block">Keyboard Shortcuts</span>
+            <span className="text-[10px] font-mono text-slate-500">
+              Swift guide & commands
+            </span>
+          </div>
         </div>
-        <div>
+        <div className="pr-1">
           {isExpanded ? (
             <ChevronUp size={15} className="text-slate-500" />
           ) : (
@@ -62,9 +75,7 @@ export default function KeyboardShortcutsHelp() {
             transition={{ duration: 0.22, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="p-4 pt-0 space-y-4">
-              <div className="border-t border-slate-200 mt-1"></div>
-              
+            <div className="p-3.5 space-y-4">
               <div className="space-y-2.5">
                 {SHORTCUTS.map((s, idx) => (
                   <div key={idx} className="flex items-center justify-between text-xs hover:bg-slate-50/70 rounded px-2 py-1 transition duration-150 gap-3">

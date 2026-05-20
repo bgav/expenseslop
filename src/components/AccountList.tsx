@@ -105,45 +105,24 @@ export default function AccountList({
   const totalReconciled = Object.values(calculatedBalances).reduce((sum, item) => sum + item.reconciled, 0);
 
   return (
-    <div className="space-y-6" id="account-sidebar-container">
-      {/* Total net worth card */}
-      <div className="bg-white rounded border border-[#e4e2d9] p-5 shadow-sm space-y-3">
-        <span className="text-xs font-mono font-medium text-slate-500 uppercase tracking-wider block">Net Assets Balance</span>
-        <div className="flex items-baseline justify-between">
-          <h2 className="text-3xl font-display font-bold tracking-tight text-slate-805 font-semibold">
-            {formatCurrency(totalNetWorth)}
-          </h2>
-          <span className="text-[10px] bg-sky-50 text-sky-700 border border-sky-100 rounded-sm px-1.5 py-0.5 font-mono">Total Liquid</span>
-        </div>
-        <div className="flex justify-between items-center pt-3 border-t border-slate-200 text-[10px] text-slate-500 font-mono">
-          <span className="flex items-center gap-1">
-            <CheckCircle2 size={13} className="text-emerald-600" />
-            Cleared: {formatCurrency(totalReconciled)}
-          </span>
-          <span className="flex items-center gap-1">
-            <AlertCircle size={13} className="text-amber-600" />
-            Uncleared: {formatCurrency(totalNetWorth - totalReconciled)}
-          </span>
-        </div>
-      </div>
-
+    <div className="space-y-4" id="account-sidebar-container">
       {/* Standalone All Accounts button above Accounts label */}
       <button
         onClick={() => onSelectAccount(null)}
-        className={`w-full text-left p-3.5 rounded border transition-all duration-200 flex items-center justify-between group ${
+        className={`w-full text-left p-3.5 rounded border transition-all duration-200 flex items-center justify-between group cursor-pointer ${
           selectedAccountId === null
-            ? 'bg-sky-50/50 border-sky-400 shadow-sm ring-1 ring-sky-500/10 text-slate-900 font-semibold'
-            : 'bg-white border-[#e4e2d9] text-slate-700 hover:bg-slate-50 shadow-sm'
+            ? 'bg-white border-[#e4e2d9] shadow-sm text-slate-900 font-semibold'
+            : 'bg-transparent border-transparent text-slate-600 hover:bg-[#eae8df]/50'
         }`}
         id="account-btn-all"
       >
         <div className="flex items-center gap-3">
-          <div className={`p-1.5 rounded-sm ${selectedAccountId === null ? 'bg-sky-100 text-sky-600' : 'bg-slate-100 text-slate-500'}`}>
+          <div className={`p-1.5 rounded-sm ${selectedAccountId === null ? 'bg-slate-800 text-white' : 'bg-[#eae8df] text-slate-600'}`}>
             <Landmark size={15} />
           </div>
           <div>
             <span className="font-sans font-semibold text-xs block">All Accounts</span>
-            <span className={`text-[10px] font-mono ${selectedAccountId === null ? 'text-sky-600' : 'text-slate-540'}`}>
+            <span className={`text-[10px] font-mono ${selectedAccountId === null ? 'text-slate-500' : 'text-slate-400'}`}>
               All assets & liabilities
             </span>
           </div>
@@ -154,16 +133,17 @@ export default function AccountList({
       </button>
 
       {/* Account List Header and container */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-500">Accounts</h3>
+      <div className="space-y-2.5">
+        <div className="flex items-center justify-between px-1 border-t border-slate-100 pt-3">
+          <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-slate-400">Accounts</h3>
           <button
             onClick={() => { resetForm(); setIsFormOpen(true); }}
-            className="p-1.5 text-slate-500 hover:text-slate-800 hover:bg-slate-100 rounded transition duration-150 focus:outline-none focus:ring-2 focus:ring-sky-500/20"
+            className="p-1 px-1.5 text-slate-400 hover:text-slate-700 hover:bg-slate-100 rounded text-xs font-mono flex items-center gap-1 transition duration-150 focus:outline-none"
             title="Add Account (Alt+A)"
             id="add-account-btn"
           >
-            <Plus size={15} />
+            <Plus size={13} />
+            <span>Add</span>
           </button>
         </div>
 
@@ -261,8 +241,8 @@ export default function AccountList({
                 key={acc.id}
                 className={`relative group rounded border transition-all duration-200 ${
                   isSelected 
-                    ? 'bg-sky-50/50 border-sky-400 shadow-sm ring-1 ring-sky-500/10 text-slate-900 font-semibold' 
-                    : 'bg-white border-[#e4e2d9] text-slate-705 hover:bg-slate-50 shadow-sm'
+                    ? 'bg-white border-[#e4e2d9] shadow-sm text-slate-900 font-semibold' 
+                    : 'bg-transparent border-transparent text-slate-600 hover:bg-[#eae8df]/50'
                 }`}
               >
                 <div
