@@ -1,0 +1,6 @@
+{
+  "name": "Personal Expense Tracker",
+  "description": "An offline, high-performance personal expense tracker optimized for rapid keyboard data entry with multiple accounts and recurring logic.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
